@@ -1,0 +1,11 @@
+---
+title: "Case Study 3"
+author: "Manuela Giansante & Lucia Camenisch"
+date: "2023-04-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
