@@ -105,7 +105,7 @@ fit_df %>% gather() %>%
 FA9 <- fa(df2, nfactors = 9, rotate = "varimax", fm = "pa")
 FA8 <- fa(df2, nfactors = 8, rotate = "varimax", fm = "pa")
 
-FA9_119 <- fa(df2[, -c(9, 11)], nfactors = 9, rotate = "varimax", fm = "pa")
+FA9_119 <- fa(df2[, -c(9,11)], nfactors = 9, rotate = "varimax", fm = "pa")
 FA8_119 <- fa(df2[, -c(9, 11)], nfactors = 8, rotate = "varimax", fm = "pa")
 ```
 
@@ -118,7 +118,7 @@ corrplot(t(FA8$loadings),
          mar = c(0, 1, 3, 0))
 corrplot(t(FA8_119$loadings),
          tl.cex = 0.7,
-         title = "PAF with 8 factors excluding qd4 and qd23 \n Loadings",
+         title = "PAF with 8 factors excluding im9 and im11 \n Loadings",
          mar = c(0, 1, 3, 0))
 corrplot(t(FA9$loadings),
          tl.cex = 0.7,
@@ -126,7 +126,47 @@ corrplot(t(FA9$loadings),
          mar = c(0, 1, 3, 0))
 corrplot(t(FA9_119$loadings),
          tl.cex = 0.7,
-         title = "PAF with 9 factors excluding qd4 and qd23 \n Loadings",
+         title = "PAF with 9 factors excluding im9 and im11 \n Loadings",
          mar = c(0, 1, 3, 0))
 ```
+
+we re run it only excluding im9
+```{r}
+FA9_9 <- fa(df2[, -c(9)], nfactors = 9, rotate = "varimax", fm = "pa")
+FA8_9 <- fa(df2[, -c(9)], nfactors = 8, rotate = "varimax", fm = "pa")
+
+par(mfrow = c(1,2))
+corrplot(t(FA8_9$loadings),
+         tl.cex = 0.7,
+         title = "PAF with 9 factors excluding im9 \n Loadings",
+         mar = c(0, 1, 3, 0))
+corrplot(t(FA9_9$loadings),
+         tl.cex = 0.7,
+         title = "PAF with 9 factors excluding im9 \n Loadings",
+         mar = c(0, 1, 3, 0))
+```
+
+we discard fa8, fa9
+
+```{r}
+print(FA8_9$loadings, cutoff = 0.3, sort = TRUE)
+print(FA8_119$loadings, cutoff = 0.3, sort = TRUE)
+print(FA9_9$loadings, cutoff = 0.3, sort = TRUE)
+print(FA9_119$loadings, cutoff = 0.3, sort = TRUE)
+```
+
+the best one seems FA9_911  
+```{r}
+ggplot(mapping = aes(x = 1:length(FA9_119$values),
+                     y = FA9_119$values,
+                     color = (FA9_119$values >= 1))) +
+  geom_point() +
+  geom_hline(yintercept = 1, linetype = "dashed") +
+  theme_classic() +
+  labs(title = "Scree plot of FA9_119",
+       x = "Factor Number",
+       y = "Eigenvalue",
+       color = "Eigenvalue >= 1")
+```
+cut at 8 (?)
 
