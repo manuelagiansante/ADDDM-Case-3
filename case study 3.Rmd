@@ -35,7 +35,7 @@ df2 <- as.data.frame(df1[apply(df1, 1, function(x) !any(x == 999)), ])
 summary(df2==999)
 ```
 
-
+### Exploratory and Confirmatory Factor Analysis
 
 ```{r}
 raqMatrix <- cor(df2)
@@ -106,7 +106,7 @@ FA9 <- fa(df2, nfactors = 9, rotate = "varimax", fm = "pa")
 FA8 <- fa(df2, nfactors = 8, rotate = "varimax", fm = "pa")
 
 FA9_119 <- fa(df2[, -c(9,11)], nfactors = 9, rotate = "varimax", fm = "pa")
-FA8_119 <- fa(df2[, -c(9, 11)], nfactors = 8, rotate = "varimax", fm = "pa")
+FA8_119 <- fa(df2[, -c(9,11)], nfactors = 8, rotate = "varimax", fm = "pa")
 ```
 
 
