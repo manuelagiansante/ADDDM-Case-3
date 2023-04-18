@@ -20,6 +20,8 @@ library(REdaS)           # KMOS(), bart_spher()
 library(psych)           # KMO(), fa(), principal()
 ```
 
+
+## Galeries Lafayette
 We load the data files.
 
 ```{r}
@@ -28,10 +30,10 @@ df <- read.csv("Case Study III_Structural Equation Modeling.csv")
 df1<- df[,c(1:22)]
 ```
 
+We investigate missing values in the data:
 
 ```{r}
-mean(df1==999)
-
+mean(df1==999)# percentage of missing data
 df2<- data.frame(sapply(df1,function(x) ifelse((x==999),NA,as.numeric(x))))
 
 # Replace NA with column mean
@@ -41,15 +43,29 @@ for (i in 1:ncol(df2)) {
 }
 #round?
 ```
+We have almost 3% of missing data, deleting it would mean we would work with a little more than half the data we have now. We therefore replace the 999 values with the column mean.
 
 ### Exploratory and Confirmatory Factor Analysis
+
+We run a correlation matrix so to see if we can individuate some grouping in our variables.
 
 ```{r}
 raqMatrix <- cor(df2)
 corrplot(raqMatrix, order = 'hclust', tl.cex = 0.8, addrect = 10)
 ```
 
-im9, im11
+We check the description files to see if the clusters are thematically coherent:
+- Im8, Im10, Im14: They all regard food and the quality of food (French cuisine, gourmet food);
+- Im6, Im7: French Lifestyle;
+- Im12, Im13: Luxury and designer brands;
+- Im20,Im21, Im22: They are about the feeling of the shopping experience, so whether the customer feels at ease;
+- Im16, Im19: They are about the perception of professionalism;
+- Im15, Im1, Im2: They cover the brand/ product assortment;
+- Im18, Im17: Describe how on trend the Galeries are perceived to be;
+- Im5, Im3, Im4: Measure how the client perceives the decorations and arrangement of the shopping areas.
+
+Variables Im9, Im11 seem to stand on their own in terms of correlations, in this order the respective questions concern French Fashion and French Cosmetics. Especially the latter one seems to be isolated.
+
 
 ```{r}
 KMO(df2)
