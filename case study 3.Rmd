@@ -103,17 +103,31 @@ We plot a bar chart of the unique variances, there not seem to be very big outli
 This is also considering that marketing wise these 2 are very high selling points especially for tourists who might come and look for something more "peculiar" and identifiable as being from Paris.
 
 ```{r}
+# Barlett's Test of Sphericity
 bart_spher(df2)
 ```
 
+We are testing whether the sample of data we have stems from a population of uncorrelated variables, meaning the correlation matrix is an identity matrix (diagonal of 1s).The test is significant, the correlation matrix is not an identity matrix, there is correlation among the variables.
+
+#### Principal Axis Factoring
+
+We use a starting number of factors 15 to avoid errors from the system but still get a a fair number of runs.
+For clarity we describe the used criteria, so the have a more readable plot:
+- fit, which measures how well the factor model reproduces the correlation matrix;
+- objective, which is the value of the function that is minimized by a maximum likelihood procedure;
+- rms, which is the sum of the squared off-diagonal residuals divided by the degrees of freedom;
+- crms, which is the RMS adjusted for degrees of freedom;
+- TLI, which is the Tucker Lewis Index of factoring reliability;
+- BIC, which is the Bayesian information criterion.
+
 ```{r}
 # we initiate and empty dataframe which will record our criteria values
-fit_df <- matrix(nrow = 11, ncol = 6)
+fit_df <- matrix(nrow = 15, ncol = 6)
 colnames(fit_df) <- c("fit", "objective", "rms", "crms", "TLI", "BIC")
 fit_df <- as.data.frame(fit_df)
 
 # we compute the factor analysis for nfactors 
-for (i in 1:11) {
+for (i in 1:15) {
   FA <- fa(df2, nfactors = i, rotate = "varimax", fm = "pa", SMC = FALSE)
   fit_df[i, 1] <- FA$fit
   fit_df[i, 2] <- FA$objective
@@ -128,11 +142,11 @@ for (i in 1:11) {
 
 ```{r}
 fit_df %>% gather() %>%                 
-  ggplot(aes(x = rep(1:11, ncol(fit_df)), y = value)) +
+  ggplot(aes(x = rep(1:15, ncol(fit_df)), y = value)) +
   facet_wrap(~ key, scales = "free") +
   geom_point() +
   theme_classic() +
-  scale_x_continuous(breaks = seq(1, 11, 1)) +
+  scale_x_continuous(breaks = seq(1, 15, 1)) +
   geom_vline(xintercept = 8, linetype = "dashed") +
   geom_vline(xintercept = 9, linetype = "dashed") +
   labs(title = "Various criteria for Principal Axis Factoring",
@@ -140,7 +154,7 @@ fit_df %>% gather() %>%
        y = "")
 ```
 
-
+It seems that the number of factors we want to try and fit is 8 or 9.
 
 ```{r, message=FALSE}
 FA9 <- fa(df2, nfactors = 9, rotate = "varimax", fm = "pa")
