@@ -53,12 +53,12 @@ We first plot the variables so to have a sense of how client perception is skewe
 ```{r}
 # Plot the variables
 par(mfrow = c(3, 3))
-for (col in c(1:ncol(df2))){
-  plotNormalHistogram(df2[col],main = paste("Frequency Distribution"))
+for (col in c(1:ncol(df2))){ 
+  plotNormalHistogram(df2[col],main = paste("Frequency Distribution of Im", col))
   }
 ```
 
-
+For most questions the distribution is skewed to the left, answers leaned towards the "does apply completely" direction.
 We run a correlation matrix so to see if we can individuate some grouping in our variables.
 
 ```{r}
@@ -76,12 +76,15 @@ We check the description files to see if the clusters are thematically coherent:
 - Im18, Im17: Describe how on trend the Galeries are perceived to be;
 - Im5, Im3, Im4: Measure how the client perceives the decorations and arrangement of the shopping areas.
 
-Variables Im9, Im11 seem to stand on their own in terms of correlations, in this order the respective questions concern French Fashion and French Cosmetics. Especially the latter one seems to be isolated.
+Variables Im9, Im11 seem to stand on their own in terms of correlations, in this order the respective questions concern French Fashion and French Cosmetics. Especially the latter one seems to be isolated in terms of correlation and meaning.
 
 
 ```{r}
+# Kaiser factor adequacy
 KMO(df2)
 ```
+
+We computed the Overall measure sampling adequacy is 0.88 the variables seem adequate enough for factor analysis. The lowest MSA is achieved by Im2, but still it is a quite high value so we should not worry too much. Im9 and Im11 both have high MSA which gien that they stood on their own in the correlation matrix it is reassuring.
 
 ```{r}
 anti_mat_diag = data.frame("Question" = 1:22,
@@ -95,6 +98,9 @@ ggplot(data = anti_mat_diag, aes(x = Question, y = UniqueVar)) +
   labs(title = "Diagonal values of anti-image correlation matrix",
        y = "Proportion of unique variance")
 ```
+
+We plot a bar chart of the unique variances, there not seem to be very big outliers, yet Im9 and Im11 do stand out, we saw how those questions were unique in terms of the matter addressed, so definitely the questionnaire could be improved by going deeper into the french fashion and french cosmetics subjects.
+This is also considering that marketing wise these 2 are very high selling points especially for tourists who might come and look for something more "peculiar" and identifiable as being from Paris.
 
 ```{r}
 bart_spher(df2)
