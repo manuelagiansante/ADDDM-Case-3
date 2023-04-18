@@ -31,8 +31,15 @@ df1<- df[,c(1:22)]
 
 ```{r}
 mean(df1==999)
-df2 <- as.data.frame(df1[apply(df1, 1, function(x) !any(x == 999)), ])
-summary(df2==999)
+
+df2<- data.frame(sapply(df1,function(x) ifelse((x==999),NA,as.numeric(x))))
+
+# Replace NA with column mean
+for (i in 1:ncol(df2)) {
+  col_mean <- mean(df2[,i], na.rm = TRUE)
+  df2[is.na(df2[,i]), i] <- col_mean
+}
+#round?
 ```
 
 ### Exploratory and Confirmatory Factor Analysis
@@ -67,12 +74,12 @@ bart_spher(df2)
 
 ```{r}
 # we initiate and empty dataframe which will record our criteria values
-fit_df <- matrix(nrow = 13, ncol = 6)
+fit_df <- matrix(nrow = 11, ncol = 6)
 colnames(fit_df) <- c("fit", "objective", "rms", "crms", "TLI", "BIC")
 fit_df <- as.data.frame(fit_df)
 
 # we compute the factor analysis for nfactors 
-for (i in 1:13) {
+for (i in 1:11) {
   FA <- fa(df2, nfactors = i, rotate = "varimax", fm = "pa", SMC = FALSE)
   fit_df[i, 1] <- FA$fit
   fit_df[i, 2] <- FA$objective
@@ -87,11 +94,11 @@ for (i in 1:13) {
 
 ```{r}
 fit_df %>% gather() %>%                 
-  ggplot(aes(x = rep(1:13, ncol(fit_df)), y = value)) +
+  ggplot(aes(x = rep(1:11, ncol(fit_df)), y = value)) +
   facet_wrap(~ key, scales = "free") +
   geom_point() +
   theme_classic() +
-  scale_x_continuous(breaks = seq(1, 13, 1)) +
+  scale_x_continuous(breaks = seq(1, 11, 1)) +
   geom_vline(xintercept = 8, linetype = "dashed") +
   geom_vline(xintercept = 9, linetype = "dashed") +
   labs(title = "Various criteria for Principal Axis Factoring",
@@ -101,7 +108,7 @@ fit_df %>% gather() %>%
 
 
 
-```{r}
+```{r, message=FALSE}
 FA9 <- fa(df2, nfactors = 9, rotate = "varimax", fm = "pa")
 FA8 <- fa(df2, nfactors = 8, rotate = "varimax", fm = "pa")
 
