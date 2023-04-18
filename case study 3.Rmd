@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, warning=FALSE, message=FALSE}
 library(data.table)      # data.table type
+library(rcompanion)      # plothistogram()
 library(tidyr)           # gather()
 library(kableExtra)      # kables for html document
 library(naniar)          # vis_miss()
@@ -46,6 +47,17 @@ for (i in 1:ncol(df2)) {
 We have almost 3% of missing data, deleting it would mean we would work with a little more than half the data we have now. We therefore replace the 999 values with the column mean.
 
 ### Exploratory and Confirmatory Factor Analysis
+
+We first plot the variables so to have a sense of how client perception is skewed.
+
+```{r}
+# Plot the variables
+par(mfrow = c(3, 3))
+for (col in c(1:ncol(df2))){
+  plotNormalHistogram(df2[col],main = paste("Frequency Distribution"))
+  }
+```
+
 
 We run a correlation matrix so to see if we can individuate some grouping in our variables.
 
