@@ -137,7 +137,6 @@ for (i in 1:15) {
   fit_df[i, 6] <- FA$BIC
 }
 
-
 ```
 
 ```{r}
@@ -185,7 +184,10 @@ corrplot(t(FA9_119$loadings),
          mar = c(0, 1, 3, 0))
 ```
 
-we re run it only excluding im9
+We plot the loading of all the models we estimated, we notice that the comprehensive models perform badly on the loadings for Im9 on factor 2, Im11 is not as low on factor 5 but it is not brilliant.
+
+We investigate what teh loadings look like in case we only take out the Im9:
+
 ```{r}
 FA9_9 <- fa(df2[, -c(9)], nfactors = 9, rotate = "varimax", fm = "pa")
 FA8_9 <- fa(df2[, -c(9)], nfactors = 8, rotate = "varimax", fm = "pa")
@@ -201,7 +203,8 @@ corrplot(t(FA9_9$loadings),
          mar = c(0, 1, 3, 0))
 ```
 
-we discard fa8, fa9
+The performance of Im11 in terms of loadings on factors does not improve, which conceptually makes sense because the 2 variables describe something quite different.
+We get rid of the full models and print the loadings for remaining ones:
 
 ```{r}
 print(FA8_9$loadings, cutoff = 0.3, sort = TRUE)
@@ -210,7 +213,17 @@ print(FA9_9$loadings, cutoff = 0.3, sort = TRUE)
 print(FA9_119$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-the best one seems FA9_911  
+The model with the highest cumulative variance is the FA9_911, but if we observe more carefully we notice that no variables are loading on factor PA9. Therefore, the next best option is model FA8_911.
+In this model Im15 and Im19 (very close to cut off) are partially loading on factors PA4 and PA1, we check again their descriptions to understand why that might be:
+In the correlation matrix they grouped, respectively, with brand assortment and perception of professionalism.
+PA4 in our case describes the client perception of arrangement of the Galeries, variable 9 is about the organization which logically can be connected.
+PA1 and variable 15 grouped together in the correlation matrix already which is encouraging, they are about brand assortment.
+```{r}
+descriptions[c(15,19),2]
+```
+
+We check communalities and the Scree plot to get further insight on how to handle Im9 and Im11:
+ 
 ```{r}
 ggplot(mapping = aes(x = 1:length(FA9_119$values),
                      y = FA9_119$values,
@@ -223,5 +236,22 @@ ggplot(mapping = aes(x = 1:length(FA9_119$values),
        y = "Eigenvalue",
        color = "Eigenvalue >= 1")
 ```
-cut at 8 (?)
+
+The scree plot suggests, by the elbow rule to cut off at factor number 8, which is coherent, we saw how no variable would load on the ninth factor.Meaning that PA9 explains no variation in the variables, it brings no further aid in explaining the structure of our data.
+
+```{r}
+# Compare the excluding model with the comprehensive one
+sort(FA9_119$communality)
+sort(FA9$communality)
+```
+
+Im9 and Im11 are respectively 0.406 and 0.625 which is quite low.
+```{r}
+sort(FA8_119$communality)
+```
+
+In the 8 factor model some variables gain, some lose in terms of communality values, so how correlated they are with other variables in the factor analysis.
+As our final model we select FA8_911, and proceed with confirmatory analysis.
+
+
 
