@@ -28,25 +28,28 @@ We load the data files.
 ```{r}
 descriptions <- fread("Variables and Labels_Galeries Lafayette.csv")
 df <- read.csv("Case Study III_Structural Equation Modeling.csv")
-df1<- df[,c(1:22)]
+
 ```
 
 We investigate missing values in the data:
 
 ```{r}
 mean(df1==999)# percentage of missing data
-df2<- data.frame(sapply(df1,function(x) ifelse((x==999),NA,as.numeric(x))))
+df1<- data.frame(sapply(df,function(x) ifelse((x==999),NA,as.numeric(x))))
 
 # Replace NA with column mean
-for (i in 1:ncol(df2)) {
-  col_mean <- mean(df2[,i], na.rm = TRUE)
-  df2[is.na(df2[,i]), i] <- col_mean
+for (i in 1:ncol(df1)) {
+  col_mean <- mean(df1[,i], na.rm = TRUE)
+  df1[is.na(df1[,i]), i] <- col_mean
 }
-#round?
+
+df2<- df1[,c(1:22)]
+
 ```
 We have almost 3% of missing data, deleting it would mean we would work with a little more than half the data we have now. We therefore replace the 999 values with the column mean.
 
 ### Exploratory and Confirmatory Factor Analysis
+#### Exploratory
 
 We first plot the variables so to have a sense of how client perception is skewed.
 
@@ -237,7 +240,7 @@ ggplot(mapping = aes(x = 1:length(FA9_119$values),
        color = "Eigenvalue >= 1")
 ```
 
-The scree plot suggests, by the elbow rule to cut off at factor number 8, which is coherent, we saw how no variable would load on the ninth factor.Meaning that PA9 explains no variation in the variables, it brings no further aid in explaining the structure of our data.
+The scree plot for the model FA9_119 suggests, by the elbow rule to cut off at factor number 8, which is coherent, we saw how no variable would load on the ninth factor.Meaning that PA9 explains no variation in the variables, it brings no further aid in explaining the structure of our data.
 
 ```{r}
 # Compare the excluding model with the comprehensive one
@@ -252,6 +255,15 @@ sort(FA8_119$communality)
 
 In the 8 factor model some variables gain, some lose in terms of communality values, so how correlated they are with other variables in the factor analysis.
 As our final model we select FA8_911, and proceed with confirmatory analysis.
+
+#### Confirmatory
+
+The "outcomes" for our models will be Repurchase intention and Cocreation Intention.
+The "mediators" will be "customer Satisfacton" and "Affective Commitment"
+```{r}
+
+```
+
 
 
 
