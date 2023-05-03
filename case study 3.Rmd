@@ -31,7 +31,7 @@ df <- read.csv("Case Study III_Structural Equation Modeling.csv")
 
 ```
 
-We investigate missing values in the data:
+We investigate missing values in the data, we know that missing values  have been coded as "999" in the dataset:
 
 ```{r}
 mean(df==999)# percentage of missing data
@@ -43,6 +43,7 @@ for (i in 1:ncol(df1)) {
   df1[is.na(df1[,i]), i] <- col_mean
 }
 
+# separate dataframe only with the questionaire data
 df2<- df1[,c(1:22)]
 
 ```
@@ -61,14 +62,18 @@ for (col in c(1:ncol(df2))){
   }
 ```
 
-For most questions the distribution is skewed to the left, answers leaned towards the "does apply completely" direction.
-We run a correlation matrix so to see if we can individuate some grouping in our variables.
+For most questions the distribution is skewed to the left, answers leaned towards the "does apply completely" direction. We observe that for question number 7 asking whether Galeries Lafayette Berlin embody French Savoir-vivre for the client, none has answered "not at all", because the range of the distribution starts from 2. Question 10 about whether the Galeries represent gourmet food has also received no completely negative answers
+answering not at all signals that brand identity  
+
+
+We run a correlation matrix so to see if we can individuate some groupings in our variables.
 
 ```{r}
 raqMatrix <- cor(df2)
 corrplot(raqMatrix, order = 'hclust', tl.cex = 0.8, addrect = 10)
 ```
 
+The clusters that form just by observing correlation between variable are a first suggestions of what kind of factors we can identify.
 We check the description files to see if the clusters are thematically coherent:
 - Im8, Im10, Im14: They all regard food and the quality of food (French cuisine, gourmet food);
 - Im6, Im7: French Lifestyle;
@@ -82,12 +87,14 @@ We check the description files to see if the clusters are thematically coherent:
 Variables Im9, Im11 seem to stand on their own in terms of correlations, in this order the respective questions concern French Fashion and French Cosmetics. Especially the latter one seems to be isolated in terms of correlation and meaning.
 
 
+
 ```{r}
 # Kaiser factor adequacy
 KMO(df2)
 ```
 
-We computed the Overall measure sampling adequacy is 0.88 the variables seem adequate enough for factor analysis. The lowest MSA is achieved by Im2, but still it is a quite high value so we should not worry too much. Im9 and Im11 both have high MSA which gien that they stood on their own in the correlation matrix it is reassuring.
+We computed the Overall measure sampling adequacy is 0.88 the variables seem adequate enough for factor analysis. The lowest MSA is achieved by Im2, but still it is a quite high value so we should not worry too much.Moreover, the correlation grouping it formed with Im15 and Im1 had a strong common theme. 
+Im9 and Im11 both have high MSA which given that they stood on their own in the correlation matrix it is reassuring.
 
 ```{r}
 anti_mat_diag = data.frame("Question" = 1:22,
@@ -189,10 +196,10 @@ corrplot(t(FA9_119$loadings),
 
 We plot the loading of all the models we estimated, we notice that the comprehensive models perform badly on the loadings for Im9 on factor 2, Im11 is not as low on factor 5 but it is not brilliant.
 
-We investigate what teh loadings look like in case we only take out the Im9:
+We investigate what the loadings look like in case we only take out the Im9:
 
 ```{r}
-FA9_9 <- fa(df2[, -c(9)], nfactors = 9, fm = "pa")
+FA9_9 <- fa(df2[, -c(9)], nfactors = 9,rotate="varimax", fm = "pa")
 FA8_9 <- fa(df2[, -c(9)], nfactors = 8, rotate = "varimax", fm = "pa")
 
 par(mfrow = c(1,2))
@@ -240,6 +247,8 @@ ggplot(mapping = aes(x = 1:length(FA9_119$values),
        color = "Eigenvalue >= 1")
 ```
 
+Above we have plotted out a Scree plot, which serves the purpose of determining the number of factors to retain in the Factor Axis Analysis. 
+Factors Eigenvalues are ordered in a descending order, the method is quite subjective but it might provide provide further insight.
 The scree plot for the model FA9_119 suggests, by the elbow rule to cut off at factor number 8, which is coherent, we saw how no variable would load on the ninth factor.Meaning that PA9 explains no variation in the variables, it brings no further aid in explaining the structure of our data.
 
 ```{r}
@@ -255,6 +264,8 @@ sort(FA8_119$communality)
 
 In the 8 factor model some variables gain, some lose in terms of communality values, so how correlated they are with other variables in the factor analysis.
 As our final model we select FA8_911, and proceed with confirmatory analysis.
+
+
 
 #### Confirmatory
 
