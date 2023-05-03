@@ -34,7 +34,7 @@ df <- read.csv("Case Study III_Structural Equation Modeling.csv")
 We investigate missing values in the data:
 
 ```{r}
-mean(df1==999)# percentage of missing data
+mean(df==999)# percentage of missing data
 df1<- data.frame(sapply(df,function(x) ifelse((x==999),NA,as.numeric(x))))
 
 # Replace NA with column mean
@@ -158,7 +158,7 @@ fit_df %>% gather() %>%
 
 It seems that the number of factors we want to try and fit is 8 or 9.
 
-```{r, message=FALSE}
+```{r, message=FALSE} 
 FA9 <- fa(df2, nfactors = 9, rotate = "varimax", fm = "pa")
 FA8 <- fa(df2, nfactors = 8, rotate = "varimax", fm = "pa")
 
@@ -192,7 +192,7 @@ We plot the loading of all the models we estimated, we notice that the comprehen
 We investigate what teh loadings look like in case we only take out the Im9:
 
 ```{r}
-FA9_9 <- fa(df2[, -c(9)], nfactors = 9, rotate = "varimax", fm = "pa")
+FA9_9 <- fa(df2[, -c(9)], nfactors = 9, fm = "pa")
 FA8_9 <- fa(df2[, -c(9)], nfactors = 8, rotate = "varimax", fm = "pa")
 
 par(mfrow = c(1,2))
