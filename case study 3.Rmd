@@ -481,7 +481,7 @@ factor it is loading on (PA4 and PA8) in FA8_11915. In the FA8_1191519
 communalities the lowest communality is the one of Im5, its loading on
 factor 1 in the model 0.64 both values are below acceptability
 thresholds, but removing Im5 from factor one would not make much sense
-in terms of theme covered.
+in terms of themes covered.
 
 In FA8_11915 PA4 -\> decoration and arrangement PA8 -\> professional
 appearance
@@ -506,37 +506,44 @@ descriptions[c(1,2)]
 ```
 
 
-**Factor 2:**
+**Factor 2:** French Lifestyle
+
 ```{r}
 descriptions[c(6,7,8)]
 ```
 
-**Factor 3:**
+**Factor 3:** Shopping experience
+
 ```{r}
 descriptions[c(20,21,22)]
 ```
 
-**Factor 4:**
+**Factor 4:** Organization and Arrangement
+
 ```{r}
 descriptions[c(3,4,5,19)]
 ```
 
-**Factor 5:**
+**Factor 5:** Luxury and Designer brands' presence
+
 ```{r}
 descriptions[c(12,13)]
 ```
 
-**Factor 6:**
+**Factor 6:** "Coolness" factor of the Galerie
+
 ```{r}
 descriptions[c(17,18)]
 ```
 
-**Factor 7:**
+**Factor 7:** Food 
+
 ```{r}
 descriptions[c(8,10,14)]
 ```
 
-**Factor 8:**
+**Factor 8:** Professional appearance
+
 ```{r}
 descriptions[c(16,19)]
 ```
