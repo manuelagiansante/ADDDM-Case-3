@@ -347,7 +347,7 @@ print(FA8_11919$loadings, cutoff = 0.3, sort = TRUE)
 
 ```
 
-The cumulative variance falls in between FA8_911 and FA8_9111519.This model for now we set aside.
+The cumulative variance falls in between FA8_911 and FA8_9111519.This model for now we set aside. Im15 is split between three factor with very low loadings, the question regard professional selection of brand. Thematically maybe it explores an aspect of client perception that should be investigated further. We conclude that it is better to exclude Im15.
 
 ```{r}
 FA8_11915 <- fa(df2[, -c(9,11,15)], nfactors = 8,rotate="varimax", fm = "pa")
@@ -357,15 +357,38 @@ print(FA8_11915$loadings, cutoff = 0.3, sort = TRUE)
 
 We exclude Im15 the explained variance by the model is in parity with the "slimmer" model FA8_9111519. Im19 loads on two different factors 4 and 8. Factor 8 would form at the start as well when simply observing correlations, it deals with professionalism. Both loadings on both factors are below 0.7 which is not necessarily good.
 
-Now at this stage our choice is between a model that sacrifices more information and one that includes one more variable, but the over all explained variance is almost the same.
+Now at this stage our choice is between a model that sacrifices more information and one that includes one more variable, but the over all explained variance is almost the same. 
 
 ```{r}
 FA8_1191519$Vaccounted
 FA8_11915$Vaccounted
 ```
 
-In FA8_11915 factor 8 has a higher Proportion Var,
+In FA8_11915 factor 8 has a higher Proportion Var.
 
+Communalities are the shared variability with the factors. 
+
+```{r}
+FA8_1191519$communality
+FA8_11915$communality
+```
+
+In the case of Im19 0.5841990  of its variability is explained by the factor it is loading on (PA4 and PA8) in FA8_11915.
+In the FA8_1191519 communalities the lowest communality is the one of Im5, its loading on factor 1 in the model 0.64 both values are below acceptability thresholds, but removing Im5 from factor one would not make much sense in terms of theme covered. 
+
+In FA8_11915
+PA4 -> decoration and arrangement
+PA8 -> professional appearance
+
+```{r}
+descriptions[c(16,19),]
+```
+
+Thematically it would makes sense to retain Im19 as a variable, given that PA8 in FA8_11915 has a higher SS loading, and the actual cumulative variance of the model is slightly higher than  FA8_1191519. The loadings of Im19 are low, we would have Im16 with low loadings as well, and the two thematically should go together.
+
+### Final model of choide
+
+Our final choice if FA8_11915.
 
 
 ## Confirmatory
