@@ -49,8 +49,7 @@ df2<- df1[,c(1:22)]
 ```
 We have almost 3% of missing data, deleting it would mean we would work with a little more than half the data we have now. We therefore replace the 999 values with the column mean.
 
-### Exploratory and Confirmatory Factor Analysis
-#### Exploratory
+## Exploratory Factor Analysis
 
 We first plot the variables so to have a sense of how client perception is skewed.
 
@@ -227,13 +226,15 @@ We get rid of the full models and print the loadings for remaining ones:
 
 ```{r}
 print(FA8_9$loadings, cutoff = 0.3, sort = TRUE)
-print(FA8_119$loadings, cutoff = 0.3, sort = TRUE)
 print(FA9_9$loadings, cutoff = 0.3, sort = TRUE)
 print(FA9_119$loadings, cutoff = 0.3, sort = TRUE)
+print(FA8_119$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
+Im8 loading on PA2 is quite low, we keep that in mind ofr further analysis.
+
 The model with the highest cumulative variance is the FA9_911, but if we observe more carefully we notice that no variables are loading on factor PA9. Therefore, the next best option is model FA8_911. The total variance explained is 0.763. 
-In this model Im15 and Im19 (very close to cut off) are partially loading on factors PA4 and PA1, we check again their descriptions to understand why that might be:
+In this model Im15 and Im19 (very close to cut off, respectively 0.464 and 0.312) are partially loading on factors PA4 and PA1, we check again their descriptions to understand why that might be:
 
 ```{r}
 descriptions[c(15,19),2]
@@ -241,7 +242,7 @@ descriptions[c(15,19),2]
 
 In the correlation matrix they grouped, respectively, with brand assortment and perception of professionalism.
 PA4 in our case describes the client perception of arrangement of the Galeries, variable 9 is about the organization which logically can be connected.
-PA1 and variable 15 are grouped together in the correlation matrix already which is encouraging, they are about brand assortment. We will investigate this later on. We will keep these two variables under watch, but for now these two variables make sense to be loading on the factors they are loading on.
+PA1 and variable 15 are grouped together in the correlation matrix already which is encouraging, they are about brand assortment. We will investigate this later on. We will keep these two variables under watch, but for now these two variables make sense to be loading on the factors they are loading on. Moreover, the correlation of Im15 with the other variales in factor 4 struggles to go above 0.5.
 So at this stage of the exploratory analysis we know that the best option if a 8 factor model without images 9 and 11.
 
 ### Why 9 factors are not the best option
@@ -307,10 +308,67 @@ t(cumsum(FA8_119$e.values/ncol(df2)))
 
 By considering less factors the "elbow rule" turns even more conservative, suggesting a four factor model. We test some models with less than 8 factors to see if we can outdo the 0.763 explained variance of FA8_119.
 
-**prova modelli con meno, vedi im15 e im19**
+### Six factors models
+
+The first model we run is one with only six factors and without Im9 and Im11, because we reached the 6 factor conclusion in models not considering those Images. 
+
+```{r}
+FA6_119 <- fa(df2[, -c(9,11)], nfactors = 6,rotate="varimax", fm = "pa")
+print(FA6_119$loadings, cutoff = 0.3, sort = TRUE)
+
+```
+
+The cumulative explained variance does not increase. Im15 and Im19 increase in terms of loadings, but of course the factors are not the same anymore. For example Im6, Im7, Im8, Im10, Im14 are all loading on factor2.
+```{r}
+descriptions[c(6,7,8,10,14)]
+```
+
+When we recall what aspects these questions cover we see that a "French lifestyle" theme has been clustered together with Gourmet Food, which are aspects that not necessarily go together. These images cover very different subjects, the 6 factor models pulls together variables that should not go together.
+Referring back to the original correlation plot, Im8 and Im7 correlation is quite high, but for the other variables the correlation between them is quite underwhelming. This high interaction between Im8 and Im7 is probably what drives the forming of this factor 2.
+
+So for now we set aside 6 factor models, but will proceed in investigating more regarding Im15 and Im19.
+
+### Variables Im15 and Im19, 8 factors
+
+So we remind the reader that these two variables in the FA8_119 model were loadings on factors that make logical sense, but the loadings values were quite close to the 0.3 cut-off.
+
+```{r}
+FA8_1191519 <- fa(df2[, -c(9,11,15,19)], nfactors = 8,rotate="varimax", fm = "pa")
+print(FA8_1191519$loadings, cutoff = 0.3, sort = TRUE)
+```
+
+The cumulative explained variance has increased to 0.771 by running a 8 factor model excluding Im9, Im11, Im15, Im19. What happens here is that now Im16 (Professional appearance towards customer) now has a very close to cut off loading on factor 1 (with Im3, Im4, Im5) which models decoration and arrangement. All of these have to do with appearence from a client point of view.
+
+We try running a model without the Im19 because it was the variable with the lowest loading value in FA8_119.
+
+```{r}
+FA8_11919 <- fa(df2[, -c(9,11,19)], nfactors = 8,rotate="varimax", fm = "pa")
+print(FA8_11919$loadings, cutoff = 0.3, sort = TRUE)
+
+```
+
+The cumulative variance falls in between FA8_911 and FA8_9111519.This model for now we set aside.
+
+```{r}
+FA8_11915 <- fa(df2[, -c(9,11,15)], nfactors = 8,rotate="varimax", fm = "pa")
+print(FA8_11915$loadings, cutoff = 0.3, sort = TRUE)
+
+```
+
+We exclude Im15 the explained variance by the model is in parity with the "slimmer" model FA8_9111519. Im19 loads on two different factors 4 and 8. Factor 8 would form at the start as well when simply observing correlations, it deals with professionalism. Both loadings on both factors are below 0.7 which is not necessarily good.
+
+Now at this stage our choice is between a model that sacrifices more information and one that includes one more variable, but the over all explained variance is almost the same.
+
+```{r}
+FA8_1191519$Vaccounted
+FA8_11915$Vaccounted
+```
+
+In FA8_11915 factor 8 has a higher Proportion Var,
 
 
-#### Confirmatory
+
+## Confirmatory
 
 The "outcomes" for our models will be Repurchase intention and Cocreation Intention.
 The "mediators" will be "customer Satisfacton" and "Affective Commitment"
