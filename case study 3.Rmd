@@ -22,6 +22,9 @@ library(corrplot)        # corrplot()
 library(caret)           # findCorrelation()
 library(REdaS)           # KMOS(), bart_spher()
 library(psych)           # KMO(), fa(), principal()
+library(lavaan) 
+library(semPlot)         # for visualization
+library(psy)
 ```
 
 ## Galeries Lafayette
@@ -166,11 +169,11 @@ We use a starting number of factors 15 to avoid errors from the system
 but still get a a fair number of runs. For clarity we describe the used
 criteria, so the have a more readable plot:
 
--    fit, which measures how well the factor model reproduces the
+-   fit, which measures how well the factor model reproduces the
     correlation matrix;
 
--    objective, which is the value of the function that is minimized by
-    a maximum likelihood procedure;
+-   objective, which is the value of the function that is minimized by a
+    maximum likelihood procedure;
 
 -   rms, which is the sum of the squared off-diagonal residuals divided
     by the degrees of freedom;
@@ -557,7 +560,7 @@ of model is FA8_119158.
 
 ### Final model of choice
 
-#### 1. What are the dimensions by which Galeries Lafayette is perceived?  
+#### 1. What are the dimensions by which Galeries Lafayette is perceived?
 
 Our final choice if FA8_11915. The 8 factors identified are:
 
@@ -582,7 +585,7 @@ descriptions[c(20,21,22)]
 **Factor 4:** Organization and Arrangement
 
 ```{r}
-descriptions[c(3,4,5,19)]
+descriptions[c(3,4,5)]
 ```
 
 **Factor 5:** Luxury and Designer brands' presence
@@ -611,28 +614,178 @@ descriptions[c(16,19)]
 
 ## Confirmatory Analysis
 
-Our hypothesized factor structure contains the eight factors described
-above.
-
 The "outcomes" for our models will be Repurchase intention and
 Cocreation Intention.
 
-The "mediators" will be "customer Satisfacton" and "Affective
-Commitment",
+The "mediators" will be "customer Satisfaction" and "Affective
+Commitment".
+
+### Initial factors
+
+CFA is used to test whether the design construct ( in our case
+FA8_119158) is actually appropriate in modelling the factors. In the
+exploratory part we first developed a hypothesis of what latent factors
+are described by the observable variables (Images).
+
+We state the model:
+
+`=~` means "is measured by".
 
 ```{r}
 # repopulated complete data-set
 head(df1)
 
+construct <- "
+Assortment=~Im1+Im2
+French_lifestyle=~Im6+Im7
+Shop_experience=~Im20+Im21+Im22
+Organization=~Im3+Im4+Im5
+Luxury=~Im12+Im13
+Coolness=~Im17+Im18
+Food=~Im10+Im14
+Professinalism=~Im16+Im19 
+"
+
+fit<-cfa(construct, data=df1, missing="ML")
+summary(fit, fit.measures=TRUE, standardized=TRUE)
+
+
 ```
 
-#### 
+We analyse the output.
 
-2.Are the mechanism driving satisfaction and affective commitment
-similar? Are satisfaction and affective commitment mediating the impact 
-of image perceptions on outcomes? If yes for which outcomes?
+-   Chi-square/df= 1.85 which is good is should be below 3 or below 5
+    for a 1000 observations sample (we have 533), this indicates a good
+    fit. The statistic is signifcant, we reject the null hypothesis
+    which means that our empirical sample covariance matrix S is any
+    positive definite matrix.
 
-#### 
-3. What is driving the two distinct outcomes (repurchase and co-creation
-intention): Please rank the image dimensions with respect to the total 
-effect on each outcome? Interpret your result
+-   CFI\>0.95 which is good, we accept the model. Our model is better
+    than the baseline model with uncorrelated variables.
+
+-   TFI\>0.95 as well, which is good.
+
+-   RMSEA is below 0.6.
+
+The standardised loadings are all above 0.6. Those values if squared
+represent the item's variance that is explained through the construct.
+
+We want to try and understand why the Chi-Square test was significant. Overall, the model we design through EFA is good.
+
+```{r}
+modindices(construct,minimum.value = 10, sort=TRUE)
+```
+
+The `mi` values are not super high which is comforting, we try to add Im21~~Im22 to the model and see if that brings improvement. What the output tells us is that image 21 and image 22 share variance that is not explained through the construct.
+
+```{r}
+construct2 <- "
+Assortment=~Im1+Im2
+French_lifestyle=~Im6+Im7
+Shop_experience=~Im20+Im21+Im22
+Organization=~Im3+Im4+Im5
+Luxury=~Im12+Im13
+Coolness=~Im17+Im18
+Food=~Im10+Im14
+Professinalism=~Im16+Im19 
+Im21~~Im22
+"
+
+fit2<-cfa(construct2, data=df1, missing="ML")
+summary(fit2, fit.measures=TRUE, standardized=TRUE)
+```
+
+We report only the first covariance introduction (others were performed), very little have changed in terms of performance metrics. We keep the model as it is.
+
+#### Reliability
+
+```{r}
+#Factors reliability
+cronbach(subset(df1, select = c(Im1,Im2)))$alpha
+cronbach(subset(df1, select = c(Im6,Im7)))$alpha
+cronbach(subset(df1, select = c(Im20,Im21,Im22)))$alpha
+cronbach(subset(df1, select = c(Im3,Im4,Im5)))$alpha
+cronbach(subset(df1, select = c(Im12,Im13)))$alpha
+cronbach(subset(df1, select = c(Im17,Im18)))$alpha
+cronbach(subset(df1, select = c(Im10,Im14)))$alpha
+cronbach(subset(df1, select = c(Im16,Im19)))$alpha
+
+```
+
+The alphas of the factors are high, all over the 0.70 benchmark. The items are sufficiently reliable.
+
+### Introduction of mediators and outcomes + paths
+
+Customer Satisfaction coded as C_REP
+Affective Commitment coded as SAT
+
+```{r}
+construct3 <- "
+# factors
+Assortment=~Im1+Im2
+French_lifestyle=~Im6+Im7
+Shop_experience=~Im20+Im21+Im22
+Organization=~Im3+Im4+Im5
+Luxury=~Im12+Im13
+Coolness=~Im17+Im18
+Food=~Im10+Im14
+Professinalism=~Im16+Im19
+
+# mediators
+COM=~COM_A1+COM_A2+COM_A3+COM_A4
+SAT=~SAT_1+SAT_2+SAT_3
+
+#outcomes
+C_REP=~ C_REP1+C_REP2+C_REP3
+C_CR=~C_CR1+C_CR2+C_CR3_C_CR4
+
+#paths to mediators
+COM ~ a*Assortment + b*French_lifestyle + c*Shop_experience + d*Organization + e*Luxury + f*Coolness + g*Food + h*Professionalism
+
+SAT ~ i*Assortment + l*French_lifestyle + m*Shop_experience + n*Organization + o*Luxury + p*Coolness + q*Food + r*Professionalism
+
+# paths from mediators to outcomes
+C_REP ~ u*C_REP+v*SAT 
+SAT ~ w*C_REP+z*SAT
+
+# paths from factors to outcomes (direct and indirect)
+
+
+
+
+"
+
+fit3<-cfa(construct3, data=df1, missing="ML")
+summary(fit3, fit.measures=TRUE, standardized=TRUE)
+
+```
+
+The model remains of good fit: CHi-square/df= 1,52, CFI and TFI above 0.95, RMSEA below 0.6, SRMR< 0.7.
+
+When we observe the latent variables output, we notice that all standardised loadings are above 0.6, SAT_3 by little but it is acceptable.
+COM and SAT are good measures.
+
+#### Reliability
+
+```{r}
+cronbach(subset(df1, select = c(COM_A1:COM_A4)))$alpha
+cronbach(subset(df1, select = c(SAT_1:SAT_3)))$alpha
+```
+
+The two constructs are reliable with alpha values above 0.7.
+
+
+```{r}
+semPaths(fit3,what = "path", whatLabels = "std", style = "mx",
+         rotation = 2, layout = "tree3", mar = c(1, 2, 1, 2), 
+         nCharNodes = 7,shapeMan = "rectangle", sizeMan = 8, sizeMan2 = 5, 
+         curvePivot=TRUE, edge.label.cex = 1.2)
+```
+
+
+
+#### 2.Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
+
+####3. What is driving the two distinct outcomes (repurchase and
+co-creation intention): Please rank the image dimensions with respect to
+the total effect on each outcome? Interpret your results
