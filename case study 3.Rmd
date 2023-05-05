@@ -89,15 +89,26 @@ corrplot(raqMatrix, order = 'hclust', tl.cex = 0.8, addrect = 10)
 The clusters that form just by observing correlation between variable
 are a first suggestions of what kind of factors we can identify. We
 check the description files to see if the clusters are thematically
-coherent: - Im8, Im10, Im14: They all regard food and the quality of
-food (French cuisine, gourmet food); - Im6, Im7: French Lifestyle; -
-Im12, Im13: Luxury and designer brands; - Im20,Im21, Im22: They are
-about the feeling of the shopping experience, so whether the customer
-feels at ease; - Im16, Im19: They are about the perception of
-professionalism; - Im15, Im1, Im2: They cover the brand/ product
-assortment; - Im18, Im17: Describe how on trend the Galeries are
-perceived to be; - Im5, Im3, Im4: Measure how the client perceives the
-decorations and arrangement of the shopping areas.
+coherent:
+
+-   Im8, Im10, Im14: They all regard food and the quality of food
+    (French cuisine, gourmet food);
+
+-   Im6, Im7: French Lifestyle;
+
+-   Im12, Im13: Luxury and designer brands;
+
+-   Im20,Im21, Im22: They are about the feeling of the shopping
+    experience, so whether the customer feels at ease;
+
+-   Im16, Im19: They are about the perception of professionalism;
+
+-   Im15, Im1, Im2: They cover the brand/ product assortment;
+
+-   Im18, Im17: Describe how on trend the Galeries are perceived to be;
+
+-   Im5, Im3, Im4: Measure how the client perceives the decorations and
+    arrangement of the shopping areas.
 
 Variables Im9, Im11 seem to stand on their own in terms of correlations,
 in this order the respective questions concern French Fashion and French
@@ -153,14 +164,22 @@ the variables.
 
 We use a starting number of factors 15 to avoid errors from the system
 but still get a a fair number of runs. For clarity we describe the used
-criteria, so the have a more readable plot: - fit, which measures how
-well the factor model reproduces the correlation matrix; - objective,
-which is the value of the function that is minimized by a maximum
-likelihood procedure; - rms, which is the sum of the squared
-off-diagonal residuals divided by the degrees of freedom; - crms, which
-is the RMS adjusted for degrees of freedom; - TLI, which is the Tucker
-Lewis Index of factoring reliability; - BIC, which is the Bayesian
-information criterion.
+criteria, so the have a more readable plot:
+
+-    fit, which measures how well the factor model reproduces the
+    correlation matrix;
+
+-    objective, which is the value of the function that is minimized by
+    a maximum likelihood procedure;
+
+-   rms, which is the sum of the squared off-diagonal residuals divided
+    by the degrees of freedom;
+
+-   crms, which is the RMS adjusted for degrees of freedom;
+
+-   TLI, which is the Tucker Lewis Index of factoring reliability;
+
+-   BIC, which is the Bayesian information criterion.
 
 ```{r}
 # we initiate and empty dataframe which will record our criteria values
@@ -270,7 +289,7 @@ print(FA9_119$loadings, cutoff = 0.3, sort = TRUE)
 print(FA8_119$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-Im8 loading on PA2 is quite low, we keep that in mind ofr further
+Im8 loading on PA2 is quite low, we keep that in mind for further
 analysis.
 
 The model with the highest cumulative variance is the FA9_911, but if we
@@ -350,7 +369,7 @@ We briefly recap before moving on with the investigation:
 -   we need to pay attention to the variables Im15 and Im19;
 -   Eigen Values from FA9_119 actually suggest a 6 factors model
 
-### Further invetsigation on FA8_119
+### Further investigation on FA8_119
 
 ```{r}
 # Scree Plot FA8_119
@@ -393,7 +412,7 @@ print(FA6_119$loadings, cutoff = 0.3, sort = TRUE)
 The cumulative explained variance does not increase. Im15 and Im19
 increase in terms of loadings, but of course the factors are not the
 same anymore. For example Im6, Im7, Im8, Im10, Im14 are all loading on
-factor2.
+factor2, with high loadings as well.
 
 ```{r}
 descriptions[c(6,7,8,10,14)]
@@ -414,6 +433,8 @@ investigating more regarding Im15 and Im19.
 
 ### Variables Im15 and Im19, 8 factors
 
+#### Exclude both Im15 and Im19
+
 So we remind the reader that these two variables in the FA8_119 model
 were loadings on factors that make logical sense, but the loadings
 values were quite close to the 0.3 cut-off.
@@ -430,6 +451,11 @@ to cut off loading on factor 1 (with Im3, Im4, Im5) which models
 decoration and arrangement. All of these have to do with appearence from
 a client point of view.
 
+What we observe now that we are back considering 8 factors models, is
+that Im8 still has a quite low loading.
+
+#### Excluding Im19
+
 We try running a model without the Im19 because it was the variable with
 the lowest loading value in FA8_119.
 
@@ -443,8 +469,9 @@ The cumulative variance falls in between FA8_911 and FA8_9111519.This
 model for now we set aside. Im15 is split between three factor with very
 low loadings, the question regard professional selection of brand.
 Thematically maybe it explores an aspect of client perception that
-should be investigated further. We conclude that it is better to exclude
-Im15.
+should be investigated further.
+
+#### Excluding Im15
 
 ```{r}
 FA8_11915 <- fa(df2[, -c(9,11,15)], nfactors = 8,rotate="varimax", fm = "pa")
@@ -496,20 +523,52 @@ variance of the model is slightly higher than FA8_1191519. The loadings
 of Im19 are low, we would have Im16 with low loadings as well, and the
 two thematically should go together.
 
+### Considering Im8
+
+One last thing we have not considered up until now variable Im8, which
+shows low loadings both in FA8_1191519 and in FA8_11915. There are a few
+reasons why we are considering this now, first for clarity of the
+reader. We have first decided between 8 and 9 factors, we tried the 6
+factors route and finally we digged deeper on how to best select between
+Im15 and Im19.
+
+Moreover, when we decided to retain Im19 was because otherwise the Im16
+loadings would be too low. With FA8_11915 we reach an acceptable
+explained variance, yet Im8 continues to have low loadings on PA2 and
+PA7.
+
+```{r}
+descriptions[8,2]
+```
+
+The matter covered by Im8 seems to both touch the food theme and the
+French lifestyle thematic. It seems like this question blurs factors
+domains, we run a model without to see if it is worth it keeping it in
+our model.
+
+```{r}
+FA8_119158 <- fa(df2[, -c(8,9,11,15)], nfactors = 8,rotate="varimax", fm = "pa")
+print(FA8_119158$loadings, cutoff = 0.3, sort = TRUE)
+```
+
+The resulting Cumulative explained variance is higher than FA8_1191519
+and FA8_11915, all loadings are above 0.6. We conclude, our final choice
+of model is FA8_119158.
+
 ### Final model of choise
 
 Our final choice if FA8_11915. The 8 factors identified are:
 
-**Factor 1:** 
+**Factor 1:** Assortment
+
 ```{r}
 descriptions[c(1,2)]
 ```
 
-
 **Factor 2:** French Lifestyle
 
 ```{r}
-descriptions[c(6,7,8)]
+descriptions[c(6,7)]
 ```
 
 **Factor 3:** Shopping experience
@@ -536,10 +595,10 @@ descriptions[c(12,13)]
 descriptions[c(17,18)]
 ```
 
-**Factor 7:** Food 
+**Factor 7:** Food
 
 ```{r}
-descriptions[c(8,10,14)]
+descriptions[c(10,14)]
 ```
 
 **Factor 8:** Professional appearance
