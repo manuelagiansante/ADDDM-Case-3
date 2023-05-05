@@ -548,7 +548,7 @@ descriptions[c(8,10,14)]
 descriptions[c(16,19)]
 ```
 
-## Confirmatory
+## Confirmatory Analysis
 
 The "outcomes" for our models will be Repurchase intention and
 Cocreation Intention. The "mediators" will be "customer Satisfacton" and
