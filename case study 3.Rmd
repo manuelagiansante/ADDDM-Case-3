@@ -555,7 +555,9 @@ The resulting Cumulative explained variance is higher than FA8_1191519
 and FA8_11915, all loadings are above 0.6. We conclude, our final choice
 of model is FA8_119158.
 
-### Final model of choise
+### Final model of choice
+
+#### 1. What are the dimensions by which Galeries Lafayette is perceived?  
 
 Our final choice if FA8_11915. The 8 factors identified are:
 
@@ -609,10 +611,28 @@ descriptions[c(16,19)]
 
 ## Confirmatory Analysis
 
+Our hypothesized factor structure contains the eight factors described
+above.
+
 The "outcomes" for our models will be Repurchase intention and
-Cocreation Intention. The "mediators" will be "customer Satisfacton" and
-"Affective Commitment"
+Cocreation Intention.
+
+The "mediators" will be "customer Satisfacton" and "Affective
+Commitment",
 
 ```{r}
+# repopulated complete data-set
+head(df1)
 
 ```
+
+#### 
+
+2.Are the mechanism driving satisfaction and affective commitment
+similar? Are satisfaction and affective commitment mediating the impact 
+of image perceptions on outcomes? If yes for which outcomes?
+
+#### 
+3. What is driving the two distinct outcomes (repurchase and co-creation
+intention): Please rank the image dimensions with respect to the total 
+effect on each outcome? Interpret your result
