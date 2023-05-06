@@ -772,12 +772,23 @@ Prof_SAT:=r
 fitm<-cfa(construct_m, data=df1, missing="ML")
 summary(fitm, fit.measures=TRUE, standardized=TRUE)
 
+
+```
+
+The model remains of good fit: CHi-square/df= 1,52, CFI and TFI above
+0.95, RMSEA below 0.6, SRMR\< 0.7.
+
+When we observe the latent variables output, we notice that all
+standardised loadings are above 0.6, SAT_3 by little but it is
+acceptable. COM and SAT are good measures.
+
+```{r}
 semPaths(fitm, what = "path", whatLabels = "std", style = "mx",
          rotation = 2, layout = "tree3", mar = c(1, 2, 1, 2), 
          nCharNodes = 7,shapeMan = "rectangle", sizeMan = 8, sizeMan2 = 5, 
          curvePivot=TRUE, edge.label.cex = 1.2, edge.color = "skyblue4")
-
 ```
+
 #### Reliability
 
 ```{r}
@@ -790,12 +801,6 @@ cronbach(subset(df1, select = c(SAT_1:SAT_3)))$alpha
 Customer Satisfaction coded as SAT Affective Commitment coded as COM
 
 Repurchase Intention coded as C_REP Cocreation Intention C_CR.
-
-![](images/image-14823664.png)
-
-![](images/image-555643125.png)
-
-![](images/image-1603596028.png)
 
 ```{r}
 construct3 <- "
@@ -934,18 +939,9 @@ summary(fit3, fit.measures=TRUE, standardized=TRUE)
 
 ```
 
-The model remains of good fit: CHi-square/df= 1,52, CFI and TFI above
-0.95, RMSEA below 0.6, SRMR\< 0.7.
-
-When we observe the latent variables output, we notice that all
-standardised loadings are above 0.6, SAT_3 by little but it is
-acceptable. COM and SAT are good measures.
-
 ```{r}
 lavaanPlot(name="plot", fit3, labels = NULL)
 ```
-
-
 
 The two constructs are reliable with alpha values above 0.7.
 
