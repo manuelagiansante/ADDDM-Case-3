@@ -630,7 +630,11 @@ are described by the observable variables (Images).
 
 We state the model:
 
-`=~` means "is measured by".
+`=~` means "is measured by". What lavaan does by default is correlated
+the factors, to avoid that we could `factor1~~0*factor2` and so on for
+all 8 factors. But this choice depends on the sample data we have, if we
+were to find a bad fit for this model then this is something we might
+want to consider looking into.
 
 ```{r}
 # repopulated complete data-set
