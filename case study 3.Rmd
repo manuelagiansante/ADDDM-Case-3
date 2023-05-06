@@ -731,6 +731,8 @@ Repurchase Intention coded as C_REP Cocreation Intention C_CR.
 
 ![](images/image-555643125.png)
 
+![](images/image-1603596028.png)
+
 ```{r}
 construct3 <- "
 # Factors
@@ -818,11 +820,26 @@ zp:=p*z
 zq:=q*z
 zr:=r*z
 
+# Total effects, from factors to outcomes
+# to C_REP
+A_REP := aa+ua+vi
+Fr_REP:=bb+ub+vl
+Sh_REP:=cc+uc+vm
+Org_REP:=dd+ud+vn
+Lux_REP:=ee+ue+vo
+Cool_REP:=ff+uf+vp
+Food_REP:=gg+ug+vq
+Prof_REP:=hh+uh+vr
 
-# total effects
-
-
-
+# to C_CR
+A_CR:=ii+wa+zi
+Fr_CR:=ll+wb+zl
+Sh_CR:=mm+wc+zm
+Org_CR:=nn+wd+zn
+Lux_CR:=oo+we+zo
+Cool_CR:=pp+wf+zp
+Food_CR:=qq+wg+zq
+Prof_CR:=rr+wh+zr
 
 "
 
