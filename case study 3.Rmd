@@ -783,10 +783,10 @@ standardised loadings are above 0.6, SAT_3 by little but it is
 acceptable. COM and SAT are good measures.
 
 ```{r}
-semPaths(fitm, what = "path", whatLabels = "std", style = "mx",
-         rotation = 2, layout = "tree3", mar = c(1, 2, 1, 2), 
+semPaths(fitm, what = "path", whatLabels = "std", style = "lisrel",fade=TRUE,
+         rotation = 2, layout = "tree3", mar = c(1, 1, 1, 1), 
          nCharNodes = 7,shapeMan = "rectangle", sizeMan = 8, sizeMan2 = 5, 
-         curvePivot=TRUE, edge.label.cex = 1.2, edge.color = "skyblue4")
+         curvePivot=TRUE, edge.label.cex = 1, edge.color = "darkblue")
 ```
 
 #### Reliability
@@ -939,17 +939,30 @@ summary(fit3, fit.measures=TRUE, standardized=TRUE)
 
 ```
 
+-   Chi-Square/D=1.64
+
+-   CFI and TFI above 0.95
+
+-   RMSEA 0.034
+
+-   SRMR 0.041
+
+All latent variables have std.all above 0.6
+
 ```{r}
 lavaanPlot(name="plot", fit3, labels = NULL)
 ```
 
-The two constructs are reliable with alpha values above 0.7.
-
 ```{r}
-semPaths(fit3,what = "path", whatLabels = "std", style = "mx",
-         rotation = 2, layout = "tree3", mar = c(1, 2, 1, 2), 
-         nCharNodes = 7,shapeMan = "rectangle", sizeMan = 8, sizeMan2 = 5, 
-         curvePivot=TRUE, edge.label.cex = 1.2)
+semPaths(fit3,what = "path", whatLabels = "std", style = "lisrel",exoCov = T,
+         rotation = 2, layout = "tree", mar = c(1, 2, 1, 2), 
+         nCharNodes = 7,shapeMan = "rectangle", sizeMan = 7, sizeMan2 = 5, 
+         curvePivot=TRUE, edge.label.cex = 1.2, edge.color = "darkblue")
+
+
+semPaths(fit3, what="std", fade=F, edge.label.cex=1, sizeMan=7, sizeLat=7, exoCov = F, exoVar = F, intercepts = F, rotation = 2)
+
+semPaths(fit3, what="path", whatLabels="std")
 ```
 
 #### 2.Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
