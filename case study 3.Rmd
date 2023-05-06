@@ -722,6 +722,8 @@ Affective Commitment coded as COM
 Repurchase Intention coded as C_REP
 Cocreation Intention C_CR
 
+
+
 ```{r}
 construct3 <- "
 # factors
@@ -783,7 +785,11 @@ wf:=f*w
 wg:=g*w
 wh:=h*w
 
-# passing through
+# passing through SAT
+
+C_REP ~ va*Assortment + vb*French_lifestyle + vc*Shop_experience + vd*Organization + ve*Luxury + vf*Coolness + vg*Food + vh*Professionalism
+
+C_CR ~ wa*Assortment + wb*French_lifestyle + wc*Shop_experience + wd*Organization + we*Luxury + wf*Coolness + wg*Food + wh*Professionalism
 
 
 # total effects
