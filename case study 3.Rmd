@@ -670,13 +670,17 @@ We analyse the output.
 The standardised loadings are all above 0.6. Those values if squared
 represent the item's variance that is explained through the construct.
 
-We want to try and understand why the Chi-Square test was significant. Overall, the model we design through EFA is good.
+We want to try and understand why the Chi-Square test was significant.
+Overall, the model we design through EFA is good.
 
 ```{r}
 modindices(construct,minimum.value = 10, sort=TRUE)
 ```
 
-The `mi` values are not super high which is comforting, we try to add Im21~~Im22 to the model and see if that brings improvement. What the output tells us is that image 21 and image 22 share variance that is not explained through the construct.
+The `mi` values are not super high which is comforting, we try to add
+Im21\~\~Im22 to the model and see if that brings improvement. What the
+output tells us is that image 21 and image 22 share variance that is not
+explained through the construct.
 
 ```{r}
 construct2 <- "
@@ -695,7 +699,9 @@ fit2<-cfa(construct2, data=df1, missing="ML")
 summary(fit2, fit.measures=TRUE, standardized=TRUE)
 ```
 
-We report only the first covariance introduction (others were performed), very little have changed in terms of performance metrics. We keep the model as it is.
+We report only the first covariance introduction (others were
+performed), very little have changed in terms of performance metrics. We
+keep the model as it is.
 
 #### Reliability
 
@@ -712,21 +718,22 @@ cronbach(subset(df1, select = c(Im16,Im19)))$alpha
 
 ```
 
-The alphas of the factors are high, all over the 0.70 benchmark. The items are sufficiently reliable.
+The alphas of the factors are high, all over the 0.70 benchmark. The
+items are sufficiently reliable.
 
 ### Introduction of mediators and outcomes + paths
 
-Customer Satisfaction coded as SAT
-Affective Commitment coded as COM
+Customer Satisfaction coded as SAT Affective Commitment coded as COM
 
-Repurchase Intention coded as C_REP
-Cocreation Intention C_CR
+Repurchase Intention coded as C_REP Cocreation Intention C_CR.
 
+![](images/image-14823664.png)
 
+![](images/image-555643125.png)
 
 ```{r}
 construct3 <- "
-# factors
+# Factors
 Assortment=~Im1+Im2
 French_lifestyle=~Im6+Im7
 Shop_experience=~Im20+Im21+Im22
@@ -740,26 +747,26 @@ Professinalism=~Im16+Im19
 COM=~COM_A1+COM_A2+COM_A3+COM_A4
 SAT=~SAT_1+SAT_2+SAT_3
 
-#outcomes
+# Outcomes
 C_REP=~ C_REP1+C_REP2+C_REP3
 C_CR=~C_CR1+C_CR2+C_CR3_C_CR4
 
-#paths from factors to mediators
+# Paths from factors to mediators
 COM ~ a*Assortment + b*French_lifestyle + c*Shop_experience + d*Organization + e*Luxury + f*Coolness + g*Food + h*Professionalism
 
 SAT ~ i*Assortment + l*French_lifestyle + m*Shop_experience + n*Organization + o*Luxury + p*Coolness + q*Food + r*Professionalism
 
-# paths from mediators to outcomes
+# Paths from mediators to outcomes
 C_REP ~ u*COM+v*SAT 
 C_CR ~ w*COM+z*SAT
 
-# direct paths from factors to outcome
+# Direct paths from factors to outcome
 C_REP  ~ aa*Assortment + bb*French_lifestyle + cc*Shop_experience + dd*Organization + ee*Luxury + ff*Coolness + gg*Food + hh*Professionalism
 
 C_CR ~ ii*Assortment + ll*French_lifestyle + mm*Shop_experience + nn*Organization + oo*Luxury + pp*Coolness + qq*Food + rr*Professionalism
 
-# indirect paths from factors to outcomes
-# passing through COM
+# Indirect paths from factors to outcomes
+# passing through COM (edges [a,...,h] and [u,w])
 C_REP ~ ua*Assortment + ub*French_lifestyle + uc*Shop_experience + ud*Organization + ue*Luxury + uf*Coolness + ug*Food + uh*Professionalism
 
 C_CR ~ wa*Assortment + wb*French_lifestyle + wc*Shop_experience + wd*Organization + we*Luxury + wf*Coolness + wg*Food + wh*Professionalism
@@ -785,11 +792,31 @@ wf:=f*w
 wg:=g*w
 wh:=h*w
 
-# passing through SAT
+# passing through SAT (edges [i,...,r] and [v,z])
+C_REP ~ vi*Assortment + vl*French_lifestyle + vm*Shop_experience + vn*Organization + vo*Luxury + vp*Coolness + vq*Food + vr*Professionalism
 
-C_REP ~ va*Assortment + vb*French_lifestyle + vc*Shop_experience + vd*Organization + ve*Luxury + vf*Coolness + vg*Food + vh*Professionalism
+C_CR ~ zi*Assortment + zl*French_lifestyle + zm*Shop_experience + zn*Organization + zo*Luxury + zp*Coolness + zq*Food + zr*Professionalism
 
-C_CR ~ wa*Assortment + wb*French_lifestyle + wc*Shop_experience + wd*Organization + we*Luxury + wf*Coolness + wg*Food + wh*Professionalism
+# define indirect effects through SAT
+# through COM
+vi:=i*v
+vl:=l*v
+vm:=m*v
+vn:=n*v
+vo:=o*v
+vp:=p*v
+vq:=q*v
+vr:=r*v
+
+# Through SAT
+zi:=i*z
+zl:=l*z
+zm:=m*z
+zn:=n*z
+zo:=o*z
+zp:=p*z
+zq:=q*z
+zr:=r*z
 
 
 # total effects
@@ -804,10 +831,12 @@ summary(fit3, fit.measures=TRUE, standardized=TRUE)
 
 ```
 
-The model remains of good fit: CHi-square/df= 1,52, CFI and TFI above 0.95, RMSEA below 0.6, SRMR< 0.7.
+The model remains of good fit: CHi-square/df= 1,52, CFI and TFI above
+0.95, RMSEA below 0.6, SRMR\< 0.7.
 
-When we observe the latent variables output, we notice that all standardised loadings are above 0.6, SAT_3 by little but it is acceptable.
-COM and SAT are good measures.
+When we observe the latent variables output, we notice that all
+standardised loadings are above 0.6, SAT_3 by little but it is
+acceptable. COM and SAT are good measures.
 
 #### Reliability
 
@@ -818,15 +847,12 @@ cronbach(subset(df1, select = c(SAT_1:SAT_3)))$alpha
 
 The two constructs are reliable with alpha values above 0.7.
 
-
 ```{r}
 semPaths(fit3,what = "path", whatLabels = "std", style = "mx",
          rotation = 2, layout = "tree3", mar = c(1, 2, 1, 2), 
          nCharNodes = 7,shapeMan = "rectangle", sizeMan = 8, sizeMan2 = 5, 
          curvePivot=TRUE, edge.label.cex = 1.2)
 ```
-
-
 
 #### 2.Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
 
