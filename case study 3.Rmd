@@ -846,6 +846,7 @@ Prof_CR:=rr+wh+zr
 fit3<-cfa(construct3, data=df1, missing="ML")
 summary(fit3, fit.measures=TRUE, standardized=TRUE)
 
+
 ```
 
 The model remains of good fit: CHi-square/df= 1,52, CFI and TFI above
