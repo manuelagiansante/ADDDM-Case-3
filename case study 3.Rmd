@@ -739,16 +739,26 @@ SAT=~SAT_1+SAT_2+SAT_3
 C_REP=~ C_REP1+C_REP2+C_REP3
 C_CR=~C_CR1+C_CR2+C_CR3_C_CR4
 
-#paths to mediators
+#paths from factors to mediators
 COM ~ a*Assortment + b*French_lifestyle + c*Shop_experience + d*Organization + e*Luxury + f*Coolness + g*Food + h*Professionalism
 
 SAT ~ i*Assortment + l*French_lifestyle + m*Shop_experience + n*Organization + o*Luxury + p*Coolness + q*Food + r*Professionalism
 
 # paths from mediators to outcomes
-C_REP ~ u*C_REP+v*SAT 
-SAT ~ w*C_REP+z*SAT
+C_REP ~ u*COM+v*SAT 
+C_CR ~ w*COM+z*SAT
 
-# paths from factors to outcomes (direct and indirect)
+# direct paths from factors to outcome
+C_REP  ~ aa*Assortment + bb*French_lifestyle + cc*Shop_experience + dd*Organization + ee*Luxury + ff*Coolness + gg*Food + hh*Professionalism
+
+C_CR ~ ii*Assortment + ll*French_lifestyle + mm*Shop_experience + nn*Organization + oo*Luxury + pp*Coolness + qq*Food + rr*Professionalism
+
+# indirect paths from factors to outcomes
+
+# define indirect effects
+
+
+# total effects
 
 
 
