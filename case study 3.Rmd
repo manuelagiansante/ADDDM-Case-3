@@ -25,6 +25,7 @@ library(psych)           # KMO(), fa(), principal()
 library(lavaan) 
 library(semPlot)         # for visualization
 library(psy)
+library(lavaanPlot)
 ```
 
 ## Galeries Lafayette
@@ -777,7 +778,12 @@ semPaths(fitm, what = "path", whatLabels = "std", style = "mx",
          curvePivot=TRUE, edge.label.cex = 1.2, edge.color = "skyblue4")
 
 ```
+#### Reliability
 
+```{r}
+cronbach(subset(df1, select = c(COM_A1:COM_A4)))$alpha
+cronbach(subset(df1, select = c(SAT_1:SAT_3)))$alpha
+```
 
 ### Introduction of mediators and outcomes + paths
 
@@ -818,7 +824,7 @@ SAT ~ i*Assortment + l*French_lifestyle + m*Shop_experience + n*Organization + o
 
 # Total effects for mediators
 # to COM
-A_COM := a
+A_COM :=a
 Fr_COM:=b
 Sh_COM:=c
 Org_COM:=d
@@ -838,13 +844,13 @@ Food_SAT:=q
 Prof_SAT:=r
 
 # Paths from mediators to outcomes
-C_REP ~ u*COM+v*SAT 
-C_CR ~ w*COM+z*SAT
+#C_REP ~ u*COM+v*SAT 
+#C_CR ~ w*COM+z*SAT
 
-# Direct paths from factors to outcome
-C_REP  ~ aa*Assortment + bb*French_lifestyle + cc*Shop_experience + dd*Organization + ee*Luxury + ff*Coolness + gg*Food + hh*Professionalism 
+# Paths from factors to outcome
+C_REP  ~ aa*Assortment + bb*French_lifestyle + cc*Shop_experience + dd*Organization + ee*Luxury + ff*Coolness + gg*Food + hh*Professionalism +u*COM +v*SAT
 
-C_CR ~ ii*Assortment + ll*French_lifestyle + mm*Shop_experience + nn*Organization + oo*Luxury + pp*Coolness + qq*Food + rr*Professionalism
+C_CR ~ ii*Assortment + ll*French_lifestyle + mm*Shop_experience + nn*Organization + oo*Luxury + pp*Coolness + qq*Food + rr*Professionalism + w*COM+ z*SAT
 
 # Indirect paths from factors to outcomes
 # passing through COM (edges [a,...,h] and [u,w])
@@ -878,7 +884,7 @@ wh:=h*w
 
 #C_CR ~ zi*Assortment + zl*French_lifestyle + zm*Shop_experience + zn*Organization + zo*Luxury + zp*Coolness + zq*Food + zr*Professionalism
 
-# define indirect effects through SAT
+# define indirect effects 
 # through COM
 vi:=i*v
 vl:=l*v
@@ -935,12 +941,11 @@ When we observe the latent variables output, we notice that all
 standardised loadings are above 0.6, SAT_3 by little but it is
 acceptable. COM and SAT are good measures.
 
-#### Reliability
-
 ```{r}
-cronbach(subset(df1, select = c(COM_A1:COM_A4)))$alpha
-cronbach(subset(df1, select = c(SAT_1:SAT_3)))$alpha
+lavaanPlot(name="plot", fit3, labels = NULL)
 ```
+
+
 
 The two constructs are reliable with alpha values above 0.7.
 
