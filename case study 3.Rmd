@@ -657,19 +657,49 @@ We analyse the output.
 
 -   Chi-square/df= 1.85 which is good is should be below 3 or below 5
     for a 1000 observations sample (we have 533), this indicates a good
-    fit. The statistic is signifcant, we reject the null hypothesis
-    which means that our empirical sample covariance matrix S is any
-    positive definite matrix.
+    fit. The p-value for the Chi-square statistic is 0.00, we reject the
+    null hypothesis (exact fit$\Sigma(\theta)=\Sigma$) which means that
+    our empirical sample covariance matrix S is any positive definite
+    matrix. This depends on the sample size, with a larger sample size
+    we are more likely to reject the null hypothesis of the Chi-square
+    test, which is also why we proceed with observing other measures of
+    fit.
+
+    **Incremental**
 
 -   CFI\>0.95 which is good, we accept the model. Our model is better
     than the baseline model with uncorrelated variables.
 
 -   TFI\>0.95 as well, which is good.
 
+    **Absolute**
+
 -   RMSEA is below 0.6.
+
+We see that the first items in the factors estimates (under latent
+variables) are fixed to 1, that is because lavaan uses the Marker Method
+for identification, by default, which is also why standard error z-stat
+and P value are not estimated for the first loading. By fixing that
+loading to 1 our model is at least identified (in our case df=107 so it
+is over-identified). Moreover, what this fixing to 1 does is that is
+scales the loadings (and the variances) to the scale of that item being
+fixed, for it is not necessarily crucial because all questions are over
+the same 7 item scale. So if we consider the Assortment factor, a 1 unit
+increase in Im1 will increase Im2 by 0.80.
+
+We also see that the factors variances are scaled to 1.
 
 The standardised loadings are all above 0.6. Those values if squared
 represent the item's variance that is explained through the construct.
+
+We plot our model:
+
+```{r}
+lavaanPlot(name="plot_factors", fit, labels = NULL)
+```
+
+It is the latent factors that predict the observed items, not the other
+way around.
 
 We want to try and understand why the Chi-Square test was significant.
 Overall, the model we design through EFA is good.
@@ -703,6 +733,12 @@ summary(fit2, fit.measures=TRUE, standardized=TRUE)
 We report only the first covariance introduction (others were
 performed), very little have changed in terms of performance metrics. We
 keep the model as it is.
+
+```{r}
+x<-summary(fit2, fit.measures=TRUE, standardized=TRUE)
+#Explained variance
+(x$pe$std.all)^2
+```
 
 #### Reliability
 
@@ -801,6 +837,8 @@ cronbach(subset(df1, select = c(SAT_1:SAT_3)))$alpha
 Customer Satisfaction coded as SAT Affective Commitment coded as COM
 
 Repurchase Intention coded as C_REP Cocreation Intention C_CR.
+
+`allora questo cancellalo, ma ci sono delle espressioni che ho scritto che sono commented out perchè redundant per R. ho fatto riferimento alla slide 28 dell folder 04 delle slide.`
 
 ```{r}
 construct3 <- "
@@ -943,7 +981,11 @@ summary(fit3, fit.measures=TRUE, standardized=TRUE)
 
 -   CFI and TFI above 0.95
 
--   RMSEA 0.034
+-   RMSEA measures the degree of misspecification of the model, it
+    measures 0.034, which is below the 0.05 indicating that our model is
+    a close fit to the true model.
+
+-    acceptability threshold
 
 -   SRMR 0.041
 
@@ -952,6 +994,8 @@ All latent variables have std.all above 0.6
 ```{r}
 lavaanPlot(name="plot", fit3, labels = NULL)
 ```
+
+`allora poi cancella anche quest, ma come vedi questo grafico con semapth non riesce a mettere i emdiatori al posto giusto, ora if you change the layout with tree,tre2,tree3 vedi che cambia ma non riesco a metterli in mezzo. pero lavaanplot va benissimo e quindi volevo si puo anche togliere`
 
 ```{r}
 semPaths(fit3,what = "path", whatLabels = "std", style = "lisrel",exoCov = T,
@@ -967,6 +1011,9 @@ semPaths(fit3, what="path", whatLabels="std")
 
 #### 2.Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
 
-####3. What is driving the two distinct outcomes (repurchase and
-co-creation intention): Please rank the image dimensions with respect to
-the total effect on each outcome? Interpret your results
+#### 3. What is driving the two distinct outcomes (repurchase and co-creation intention): Please rank the image dimensions with respect to the total effect on each outcome? Interpret your results
+
+References:
+
+[Confirmatory Factor Analysis (CFA) in R with lavaan
+(ucla.edu)](https://stats.oarc.ucla.edu/r/seminars/rcfa/#s3b)
