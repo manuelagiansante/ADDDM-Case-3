@@ -721,6 +721,64 @@ cronbach(subset(df1, select = c(Im16,Im19)))$alpha
 The alphas of the factors are high, all over the 0.70 benchmark. The
 items are sufficiently reliable.
 
+### Introduction of mediators
+
+We proceed with a stepwise construction of the model.
+
+```{r}
+construct_m <- "
+# Factors
+Assortment=~Im1+Im2
+French_lifestyle=~Im6+Im7
+Shop_experience=~Im20+Im21+Im22
+Organization=~Im3+Im4+Im5
+Luxury=~Im12+Im13
+Coolness=~Im17+Im18
+Food=~Im10+Im14
+Professionalism=~Im16+Im19
+
+# mediators
+COM=~COM_A1+COM_A2+COM_A3+COM_A4
+SAT=~SAT_1+SAT_2+SAT_3
+
+# Paths from factors to mediators
+COM ~ a*Assortment + b*French_lifestyle + c*Shop_experience + d*Organization + e*Luxury + f*Coolness + g*Food + h*Professionalism
+
+SAT ~ i*Assortment + l*French_lifestyle + m*Shop_experience + n*Organization + o*Luxury + p*Coolness + q*Food + r*Professionalism
+
+# Total effects for mediators
+# to COM
+A_COM := a
+Fr_COM:=b
+Sh_COM:=c
+Org_COM:=d
+Lux_COM:=e
+Cool_COM:=f
+Food_COM:=g
+Prof_COM:=h
+
+# to SAT
+A_SAT:=i
+Fr_SAT:=l
+Sh_SAT:=m
+Org_SAT:=n
+Lux_SAT:=o
+Cool_SAT:=p
+Food_SAT:=q
+Prof_SAT:=r
+
+"
+fitm<-cfa(construct_m, data=df1, missing="ML")
+summary(fitm, fit.measures=TRUE, standardized=TRUE)
+
+semPaths(fitm, what = "path", whatLabels = "std", style = "mx",
+         rotation = 2, layout = "tree3", mar = c(1, 2, 1, 2), 
+         nCharNodes = 7,shapeMan = "rectangle", sizeMan = 8, sizeMan2 = 5, 
+         curvePivot=TRUE, edge.label.cex = 1.2, edge.color = "skyblue4")
+
+```
+
+
 ### Introduction of mediators and outcomes + paths
 
 Customer Satisfaction coded as SAT Affective Commitment coded as COM
@@ -757,6 +815,27 @@ C_CR=~C_CR1+C_CR2+C_CR3+C_CR4
 COM ~ a*Assortment + b*French_lifestyle + c*Shop_experience + d*Organization + e*Luxury + f*Coolness + g*Food + h*Professionalism
 
 SAT ~ i*Assortment + l*French_lifestyle + m*Shop_experience + n*Organization + o*Luxury + p*Coolness + q*Food + r*Professionalism
+
+# Total effects for mediators
+# to COM
+A_COM := a
+Fr_COM:=b
+Sh_COM:=c
+Org_COM:=d
+Lux_COM:=e
+Cool_COM:=f
+Food_COM:=g
+Prof_COM:=h
+
+# to SAT
+A_SAT:=i
+Fr_SAT:=l
+Sh_SAT:=m
+Org_SAT:=n
+Lux_SAT:=o
+Cool_SAT:=p
+Food_SAT:=q
+Prof_SAT:=r
 
 # Paths from mediators to outcomes
 C_REP ~ u*COM+v*SAT 
