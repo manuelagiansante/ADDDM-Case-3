@@ -716,8 +716,11 @@ The alphas of the factors are high, all over the 0.70 benchmark. The items are s
 
 ### Introduction of mediators and outcomes + paths
 
-Customer Satisfaction coded as C_REP
-Affective Commitment coded as SAT
+Customer Satisfaction coded as SAT
+Affective Commitment coded as COM
+
+Repurchase Intention coded as C_REP
+Cocreation Intention C_CR
 
 ```{r}
 construct3 <- "
@@ -754,8 +757,33 @@ C_REP  ~ aa*Assortment + bb*French_lifestyle + cc*Shop_experience + dd*Organizat
 C_CR ~ ii*Assortment + ll*French_lifestyle + mm*Shop_experience + nn*Organization + oo*Luxury + pp*Coolness + qq*Food + rr*Professionalism
 
 # indirect paths from factors to outcomes
+# passing through COM
+C_REP ~ ua*Assortment + ub*French_lifestyle + uc*Shop_experience + ud*Organization + ue*Luxury + uf*Coolness + ug*Food + uh*Professionalism
 
-# define indirect effects
+C_CR ~ wa*Assortment + wb*French_lifestyle + wc*Shop_experience + wd*Organization + we*Luxury + wf*Coolness + wg*Food + wh*Professionalism
+
+# define indirect effects through COM
+# to C_REP
+ua:=a*u
+ub:=b*u
+uc:=c*u
+ud:=d*u
+ue:=e*u
+uf:=f*u
+ug:=g*u
+uh:=h*u
+
+# to C_CR
+wa:=a*w
+wb:=b*w
+wc:=c*w
+wd:=d*w
+we:=e*w
+wf:=f*w
+wg:=g*w
+wh:=h*w
+
+# passing through
 
 
 # total effects
