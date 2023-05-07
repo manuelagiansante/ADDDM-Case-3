@@ -594,7 +594,7 @@ Food=~Im10+Im14
 Professinalism=~Im16+Im19 
 "
 
-fit<-cfa(construct, data=df1, missing="ML")
+fit<-lavaan::cfa(construct, data=df1, missing="ML")
 summary(fit, fit.measures=TRUE, standardized=TRUE)
 ```
 
@@ -806,8 +806,7 @@ paths.
 `allora questo cancellalo, ma ci sono delle espressioni che ho scritto che sono commented out perchè redundant per R. ho fatto riferimento alla slide 28 dell folder 04 delle slide.`
 
 ```{r}
-construct3 <- "
-
+construct3 <-"
 # MEASUREMENT MODELS
 # Factors
 Assortment=~Im1+Im2
@@ -836,7 +835,7 @@ SAT ~ i*Assortment + l*French_lifestyle + m*Shop_experience + n*Organization + o
 
 # Total effects for mediators
 # to COM
-A_COM :=a
+A_COM:=a
 Fr_COM:=b
 Sh_COM:=c
 Org_COM:=d
@@ -937,10 +936,9 @@ Lux_CR:=oo+we+zo
 Cool_CR:=pp+wf+zp
 Food_CR:=qq+wg+zq
 Prof_CR:=rr+wh+zr
-
 "
 
-fit3<-cfa(construct3, data=df1, missing="ML")
+fit3<-cfa(construct3, data=df1)
 summary(fit3, fit.measures=TRUE, standardized=TRUE)
 
 
