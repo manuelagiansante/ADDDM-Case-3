@@ -596,7 +596,7 @@ Commitment".
 ### Initial factors
 
 CFA is used to test whether the design construct ( in our case
-FA8_119158) is actually appropriate in modelling the factors. In the
+`FA8_119_815`) is actually appropriate in modelling the factors. In the
 exploratory part we first developed a hypothesis of what latent factors
 are described by the observable variables (Images).
 
@@ -604,30 +604,29 @@ We state the model:
 
 `=~` means "is measured by", what we are designing here is a measurement
 model, because the latent variables predict the observed exogenous
-variables. What lavaan does by default is correlated the factors, to
+variables. What `lavaan` does by default is correlating the factors, to
 avoid that we could `factor1~~0*factor2` and so on for all 8 factors.
 But this choice depends on the sample data we have, if we were to find a
 bad fit for this model then this is something we might want to consider
 looking into.
 
 ```{r}
-# repopulated complete data-set
-head(df1)
-
 construct <- "
+Organization=~Im3+Im4+Im5
+Food=~Im10+Im14
+Shop_experience=~Im20+Im21+Im22
+Coolness=~Im17+Im18
 Assortment=~Im1+Im2
 French_lifestyle=~Im6+Im7
-Shop_experience=~Im20+Im21+Im22
-Organization=~Im3+Im4+Im5
 Luxury=~Im12+Im13
-Coolness=~Im17+Im18
-Food=~Im10+Im14
 Professinalism=~Im16+Im19 
 "
 
-fit<-lavaan::cfa(construct, data=df1, missing="ML")
-summary(fit, fit.measures=TRUE, standardized=TRUE)
+fit <- lavaan::cfa(construct, data = df1, missing = "ML")
+summary(fit, fit.measures = TRUE, standardized = TRUE)
 ```
+
+
 
 We analyse the output.
 
