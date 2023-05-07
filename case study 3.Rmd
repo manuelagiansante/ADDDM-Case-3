@@ -1026,7 +1026,7 @@ summary(fit3, fit.measures=TRUE, standardized=TRUE)
     measures 0.034, which is below the 0.05 indicating that our model is
     a close fit to the true model.
 
--    acceptability threshold
+-   acceptability threshold
 
 -   SRMR 0.041
 
