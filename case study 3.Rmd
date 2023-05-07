@@ -716,46 +716,6 @@ We report only the first covariance introduction (others were
 performed), very little have changed in terms of performance metrics. We
 keep the model as it is.
 
-#### Exogenous Construct Reliability
-
-Construct reliability can be measured either with Cronbach's alpha or with Composite Reliability (CR). The former is less reliable of a measure. Regardless, if either one are above 0.95 it means that the observables forming the factor are measuring the same thing, making them redundant.
-
-**Cronbach's alpha**
-
-```{r}
-
-cronbach(subset(df1, select = c(Im1,Im2)))$alpha
-cronbach(subset(df1, select = c(Im6,Im7)))$alpha
-cronbach(subset(df1, select = c(Im20,Im21,Im22)))$alpha
-cronbach(subset(df1, select = c(Im3,Im4,Im5)))$alpha
-cronbach(subset(df1, select = c(Im12,Im13)))$alpha
-cronbach(subset(df1, select = c(Im17,Im18)))$alpha
-cronbach(subset(df1, select = c(Im10,Im14)))$alpha
-cronbach(subset(df1, select = c(Im16,Im19)))$alpha
-
-```
-
-The alphas of the factors are high, all over the 0.70 benchmark. The
-items are sufficiently reliable. None is above 0.95, the questions describe the latent factor well without being redundant.
-
-**Composite Reliability**
-
-```{r}
-std.loadings<- inspect(fit, what="std")$lambda
-check=std.loadings
-check[check>0] <- 1
-std.loadings[std.loadings==0] <- NA
-std.loadings2 <- std.loadings^2
-std.theta<- inspect(fit, what="std")$theta
-
-sum.std.loadings<-colSums(std.loadings, na.rm=TRUE)^2
-sum.std.theta<-rowSums(std.theta)
-sum.std.theta=check*sum.std.theta
-CR=sum.std.loadings/(sum.std.loadings+colSums(sum.std.theta))
-CR
-```
-
-The CR values are high enough, without signaling redundancy.
 
 ### Introduction of mediators
 
@@ -1031,10 +991,6 @@ summary(fit3, fit.measures=TRUE, standardized=TRUE)
 
 All latent variables have std.all above 0.6.
 
-```{r}
-
-```
-
 
 ```{r}
 lavaanPlot(name="plot", fit3, labels = NULL)
@@ -1092,9 +1048,38 @@ summary(fit_trial,fit.measures=TRUE, standardized=TRUE)
 
 ```
 
-#### Local Fit
+
+
+#### Reliability of Exogenous and Endogenous Constructs
+
+Construct reliability can be measured either with Cronbach's alpha or with Composite Reliability (CR). The former is less reliable of a measure. Regardless, if either one are above 0.95 it means that the observables forming the factor are measuring the same thing, making them redundant.
+
+**Cronbach's alpha**
 
 ```{r}
+
+cronbach(subset(df1, select = c(Im1,Im2)))$alpha
+cronbach(subset(df1, select = c(Im6,Im7)))$alpha
+cronbach(subset(df1, select = c(Im20,Im21,Im22)))$alpha
+cronbach(subset(df1, select = c(Im3,Im4,Im5)))$alpha
+cronbach(subset(df1, select = c(Im12,Im13)))$alpha
+cronbach(subset(df1, select = c(Im17,Im18)))$alpha
+cronbach(subset(df1, select = c(Im10,Im14)))$alpha
+cronbach(subset(df1, select = c(Im16,Im19)))$alpha
+cronbach(subset(df1, select = c(COM_A1:COM_A4)))$alpha
+cronbach(subset(df1, select = c(SAT_1:SAT_3)))$alpha
+cronbach(subset(df1, select = c(C_CR1:C_CR4)))$alpha
+cronbach(subset(df1, select = c(C_REP1:C_REP3)))$alpha
+```
+
+The alphas of the factors are high, all over the 0.70 benchmark. The
+items are sufficiently reliable. None is above 0.95, the questions describe the latent factor well without being redundant.
+
+
+**Composite Reliability**
+
+```{r}
+# computing needed parameters
 std.loadings<- inspect(fit3, what="std")$lambda
 check=std.loadings
 check[check>0] <- 1
@@ -1102,16 +1087,7 @@ std.loadings[std.loadings==0] <- NA
 std.loadings2 <- std.loadings^2
 std.theta<- inspect(fit3, what="std")$theta
 
-
-#Individual item Reliability
-IIR=std.loadings2/(colSums(std.theta)+std.loadings2)
-IIR
-
-```
-
-#### Composite Reliability
-
-```{r}
+#CR
 sum.std.loadings<-colSums(std.loadings, na.rm=TRUE)^2
 sum.std.theta<-rowSums(std.theta)
 sum.std.theta=check*sum.std.theta
@@ -1119,8 +1095,19 @@ CR=sum.std.loadings/(sum.std.loadings+colSums(sum.std.theta))
 CR
 ```
 
+The CR values are high enough, without signaling redundancy.
 
-#### Average Variance Extracted
+**Indicator Reliability**
+```{r}
+#Individual item Reliability
+IIR=std.loadings2/(colSums(std.theta)+std.loadings2)
+IIR
+
+```
+
+We observe that the reliability for C_CR2 is low. That should be take out of the model.
+
+**Average Variance Extracted**
 
 It is the measure of the amount of variance that is captured by a construct in relation to the amount of variance due to measurement error.
 
