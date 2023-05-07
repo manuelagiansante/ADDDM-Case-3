@@ -596,8 +596,6 @@ Professinalism=~Im16+Im19
 
 fit<-cfa(construct, data=df1, missing="ML")
 summary(fit, fit.measures=TRUE, standardized=TRUE)
-
-
 ```
 
 We analyse the output.
@@ -658,7 +656,7 @@ We want to try and understand why the Chi-Square test was significant.
 Overall, the model we design through EFA is good.
 
 ```{r}
-modindices(fit,minimum.value = 10, sort=TRUE)
+modindices(fit, minimum.value = 10, sort. = TRUE)
 ```
 
 The `mi` values are not super high which is comforting, we try to add
