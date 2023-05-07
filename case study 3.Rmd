@@ -717,7 +717,7 @@ performed), very little have changed in terms of performance metrics. We
 keep the model as it is.
 
 
-### Introduction of mediators
+### Mediators
 
 We proceed with a stepwise construction of the model, which is
 structural since we are introducing a relationship between latent
@@ -795,7 +795,7 @@ The path linking COM and SAT is because we are allowing for the two to
 predict each-other.
 
 
-### Introduction of mediators and outcomes + paths
+### Complete Model
 
 Customer Satisfaction coded as SAT Affective Commitment coded as COM
 
@@ -1078,7 +1078,7 @@ IIR
 
 We observe that the reliability for C_CR2 is low. That should be take out of the model.
 
-**Average Variance Extracted**
+#### Average Variance Extracted
 
 It is the measure of the amount of variance that is captured by a construct in relation to the amount of variance due to measurement error.
 
@@ -1096,10 +1096,11 @@ std_fit1$psi^2
 ```
 
 
+#### Discriminant validity
 
  Discriminant validity measures the distinctiveness of a
-construct. Discriminant validity is demonstrated when the shared variance within a construct (AVE) exceeds the shared variance between the
-constructs. T
+construct. Discriminant validity is demonstrated when the shared variance within a construct (AVE) exceeds the shared variance between the
+constructs. 
 
 
 #### 2.Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
