@@ -65,8 +65,8 @@ We have almost 3% of missing data, deleting it would mean we would work
 with a little more than half the data we have now. We therefore replace
 the 999 values with the column mean.
 
-We first plot the variables to have a sense of how client perception
-is skewed.
+We first plot the variables to have a sense of how client perception is
+skewed.
 
 ```{r}
 # Plot the variables
@@ -83,8 +83,7 @@ French Savoir-vivre for the client, none has answered "not at all",
 because the range of the distribution starts from 2. Question 10 about
 whether the Galeries represent gourmet food has also received no
 completely negative answers answering not at all signals that brand
-identity
-**END OF SENTENCE?**
+identity **END OF SENTENCE?**
 
 We run a correlation matrix so to see if we can individuate some
 groupings in our variables.
@@ -113,14 +112,15 @@ coherent:
 
 -   `Im15`, `Im1`, `Im2`: They cover the brand/product assortment;
 
--   `Im18`, `Im17`: Describe how on trend the Galeries are perceived to be;
+-   `Im18`, `Im17`: Describe how on trend the Galeries are perceived to
+    be;
 
--   `Im5`, `Im3`, `Im4`: Measure how the client perceives the decorations and
-    arrangement of the shopping areas.
+-   `Im5`, `Im3`, `Im4`: Measure how the client perceives the
+    decorations and arrangement of the shopping areas.
 
-Variables `Im9` and `Im11` seem to stand on their own in terms of correlations,
-the questions concern French Fashion and French
-Cosmetics respectively. Especially the latter one seems to be isolated in terms of
+Variables `Im9` and `Im11` seem to stand on their own in terms of
+correlations, the questions concern French Fashion and French Cosmetics
+respectively. Especially the latter one seems to be isolated in terms of
 correlation and meaning.
 
 We compute the Kaiser-Meyer-Olkin test.
@@ -130,12 +130,14 @@ We compute the Kaiser-Meyer-Olkin test.
 KMO(df2)
 ```
 
-The overall Measure of Sampling Adequacy is 0.88. The variables
-seem adequate enough for factor analysis. According to Kaiser, a MSA in the .80s is "meritorious". The lowest MSA is achieved by
-`Im2`, but still it is a quite high value so we should not worry too
-much.Moreover, the correlation grouping it formed with `Im15` and I``m1 had
-a strong common theme. `Im9` and `Im11` both have high MSA despite them
-standing on their own in the correlation matrix, so it is reassuring.
+The overall Measure of Sampling Adequacy is 0.88. The variables seem
+adequate enough for factor analysis. According to Kaiser, a MSA in the
+.80s is "meritorious". The lowest MSA is achieved by `Im2`, but still it
+is a quite high value so we should not worry too much.Moreover, the
+correlation grouping it formed with `Im15` and
+I\``m1 had a strong common theme.`Im9`and`Im11\` both have high MSA
+despite them standing on their own in the correlation matrix, so it is
+reassuring.
 
 We plot a bar chart of the unique variance of each variable.
 
@@ -152,13 +154,13 @@ ggplot(data = anti_mat_diag, aes(x = Question, y = UniqueVar)) +
        y = "Proportion of unique variance")
 ```
 
-There doesn't seem to be very
-big outliers, but `Im9` and `Im11` do stand out. We saw how those questions
-were unique in terms of the matter addressed, so the
-questionnaire definitely could be improved by going deeper into the french fashion
-and french cosmetics subjects. This is also important considering that marketing-wise these two subjects are very high selling points especially for tourists who
-might come and look for something more authentic and identifiable as
-being from Paris.
+There doesn't seem to be very big outliers, but `Im9` and `Im11` do
+stand out. We saw how those questions were unique in terms of the matter
+addressed, so the questionnaire definitely could be improved by going
+deeper into the french fashion and french cosmetics subjects. This is
+also important considering that marketing-wise these two subjects are
+very high selling points especially for tourists who might come and look
+for something more authentic and identifiable as being from Paris.
 
 We use Bartlett's test of sphericity.
 
@@ -169,9 +171,10 @@ bart_spher(df2)
 
 We are testing whether the sample of data we have stems from a
 population of uncorrelated variables, meaning the correlation matrix is
-an identity matrix (diagonal of 1s). This is the null hypothesis. Since we get a very small $p$-value under 0.05, the null hypothesis can be rejected, meaning that the
-correlation matrix is not an identity matrix and there are strong correlations among
-the variables.
+an identity matrix (diagonal of 1s). This is the null hypothesis. Since
+we get a very small $p$-value under 0.05, the null hypothesis can be
+rejected, meaning that the correlation matrix is not an identity matrix
+and there are strong correlations among the variables.
 
 # Exploratory Factor Analysis with Principal Axis Factoring
 
@@ -1022,6 +1025,8 @@ summary(fit3, fit.measures=TRUE, standardized=TRUE)
 
 
 ```
+
+**Measures of fit**
 
 -   Chi-Square/D=1.64
 
