@@ -716,7 +716,7 @@ We report only the first covariance introduction (others were
 performed), very little have changed in terms of performance metrics. We
 keep the model as it is.
 
-#### Construct Reliability
+#### Exogenous Construct Reliability
 
 Construct reliability can be measured either with Cronbach's alpha or with Composite Reliability (CR). The former is less reliable of a measure. Regardless, if either one are above 0.95 it means that the observables forming the factor are measuring the same thing, making them redundant.
 
@@ -746,7 +746,7 @@ check=std.loadings
 check[check>0] <- 1
 std.loadings[std.loadings==0] <- NA
 std.loadings2 <- std.loadings^2
-std.theta<- inspect(fit3, what="std")$theta
+std.theta<- inspect(fit, what="std")$theta
 
 sum.std.loadings<-colSums(std.loadings, na.rm=TRUE)^2
 sum.std.theta<-rowSums(std.theta)
@@ -834,12 +834,18 @@ semPaths(fitm, what = "path", whatLabels = "std", style = "lisrel",fade=TRUE,
 The path linking COM and SAT is because we are allowing for the two to
 predict each-other.
 
-#### Reliability
+#### Mediators Construct Reliability
+
+**Cronbach's alpha**
 
 ```{r}
 cronbach(subset(df1, select = c(COM_A1:COM_A4)))$alpha
 cronbach(subset(df1, select = c(SAT_1:SAT_3)))$alpha
 ```
+
+They are high without being redundant.
+`allora io cr non lo faccio perchè lei non l ha fatto e io non mi voglio sbattare ad accedere i valori giusti`
+
 
 ### Introduction of mediators and outcomes + paths
 
@@ -1099,6 +1105,8 @@ CR
 
 #### Average Variance Extracted
 
+It is the measure of the amount of variance that is captured by a construct in relation to the amount of variance due to measurement error.
+
 ```{r}
 std.loadings<- inspect(fit3, what="std")$lambda
 std.loadings <- std.loadings^2
@@ -1114,6 +1122,11 @@ std_fit1$psi^2
 
 
 
+ Discriminant validity measures the distinctiveness of a
+construct. Discriminant validity is demonstrated when the shared variance within a construct (AVE) exceeds the shared variance between the
+constructs. T
+
+
 #### 2.Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
 
 #### 3. What is driving the two distinct outcomes (repurchase and co-creation intention): Please rank the image dimensions with respect to the total effect on each outcome? Interpret your results
@@ -1122,3 +1135,10 @@ References:
 
 [Confirmatory Factor Analysis (CFA) in R with lavaan
 (ucla.edu)](https://stats.oarc.ucla.edu/r/seminars/rcfa/#s3b)
+
+https://www.sciencedirect.com/science/article/pii/S1071581910001278
+
+https://en.wikipedia.org/wiki/Congeneric_reliability
+
+https://en.wikipedia.org/wiki/Average_variance_extracted
+
