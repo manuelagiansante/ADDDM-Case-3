@@ -173,13 +173,11 @@ an identity matrix (diagonal of 1s). This is the null hypothesis. Since we get a
 correlation matrix is not an identity matrix and there are strong correlations among
 the variables.
 
-# Exploratory Factor Analysis
+# Exploratory Factor Analysis with Principal Axis Factoring
 
-#### Principal Axis Factoring
 
-We use a starting number of factors 15 to avoid errors from the system
-but still get a a fair number of runs. For clarity we describe the used
-criteria, so the have a more readable plot:
+We explore models with 1 to 15 factors, as adding more factors results in an error. And plot some key measures which asses how well the model represents the underlying structure of our dataset.
+For clarity, we describe the criteria used below, to facilitaty comprehension:
 
 -   fit, which measures how well the factor model reproduces the
     correlation matrix;
@@ -187,10 +185,10 @@ criteria, so the have a more readable plot:
 -   objective, which is the value of the function that is minimized by a
     maximum likelihood procedure;
 
--   rms, which is the sum of the squared off-diagonal residuals divided
-    by the degrees of freedom;
+-   crms, which is the sum of the squared off-diagonal residuals divided
+    by the degrees of freedom adjusted for degrees of freedom;
 
--   crms, which is the RMS adjusted for degrees of freedom;
+-   RMSEA, which is the root mean squared error of approximation;
 
 -   TLI, which is the Tucker Lewis Index of factoring reliability;
 
@@ -199,7 +197,7 @@ criteria, so the have a more readable plot:
 ```{r}
 # we initiate and empty dataframe which will record our criteria values
 fit_df <- matrix(nrow = 15, ncol = 6)
-colnames(fit_df) <- c("fit", "objective", "rms", "crms", "TLI", "BIC")
+colnames(fit_df) <- c("fit", "objective", "RMSEA", "crms", "TLI", "BIC")
 fit_df <- as.data.frame(fit_df)
 
 # we compute the factor analysis for nfactors 
@@ -207,7 +205,7 @@ for (i in 1:15) {
   FA <- fa(df2, nfactors = i, rotate = "varimax", fm = "pa", SMC = FALSE)
   fit_df[i, 1] <- FA$fit
   fit_df[i, 2] <- FA$objective
-  fit_df[i, 3] <- FA$rms
+  fit_df[i, 3] <- FA$RMSEA[1]
   fit_df[i, 4] <- FA$crms
   fit_df[i, 5] <- FA$TLI
   fit_df[i, 6] <- FA$BIC
@@ -231,7 +229,7 @@ fit_df %>% gather() %>%
 
 It seems that the number of factors we want to try and fit is 8 or 9.
 
-### Full models with 9 or 8 factors
+## Full models with 8 or 9 factors
 
 We start fitting our first models, of course selecting our final model
 will be a process of trial and error.
@@ -268,9 +266,16 @@ corrplot(t(FA9_119$loadings),
          mar = c(0, 1, 3, 0))
 ```
 
-We plot the loading of all the models we estimated, we notice that the
-comprehensive models perform badly on the loadings for Im9 on factor 2,
-Im11 is not as low on factor 5 but it is not brilliant.
+When plotting the loadings of all the models we estimated, we notice that the
+full models perform badly on the loadings for `Im9` on factor 2,
+`Im11` is not as low on factor 5 but it is not brilliant.
+
+We laso notice that `Im8`, `Im15` and `Im19` seem to have difficulties, they are partially loaded onto multiple factors or not loaded very strongly on one factor. We have to investigate these questions further.
+
+- `Im8` assesses the "Expertise in French traditional cuisine". Thus, it loads both on the construct we called *French lifestyle* and onto *Food*.
+- `Im15` asseses the "Professional selection of brands". Thus, it loads on both *Product assortment* and *Professionalism*.
+- `Im19` assesses whether Galeries Lafayette are a "Professional organisation". This is under the *Professionalism* construct as well, but its loading is overall weaker.
+
 
 ### Models without Image 9 (9 and 8 factors)
 
@@ -624,7 +629,7 @@ descriptions[c(10,14)]
 descriptions[c(16,19)]
 ```
 
-## Confirmatory Analysis
+# Confirmatory Analysis
 
 The "outcomes" for our models will be Repurchase intention and
 Cocreation Intention.
