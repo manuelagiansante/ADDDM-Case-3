@@ -1013,8 +1013,6 @@ C_REP  ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury
 
 C_CR ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury + Coolness + Food + Professionalism + COM + SAT"
 
-
-
 fit_trial<- sem(construct_trial, data=df1)
 summary(fit_trial,fit.measures=TRUE, standardized=TRUE)
 
