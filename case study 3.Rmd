@@ -630,11 +630,13 @@ are described by the observable variables (Images).
 
 We state the model:
 
-`=~` means "is measured by". What lavaan does by default is correlated
-the factors, to avoid that we could `factor1~~0*factor2` and so on for
-all 8 factors. But this choice depends on the sample data we have, if we
-were to find a bad fit for this model then this is something we might
-want to consider looking into.
+`=~` means "is measured by", what we are designing here is a measurement
+model, because the latent variables predict the observed exogenous
+variables. What lavaan does by default is correlated the factors, to
+avoid that we could `factor1~~0*factor2` and so on for all 8 factors.
+But this choice depends on the sample data we have, if we were to find a
+bad fit for this model then this is something we might want to consider
+looking into.
 
 ```{r}
 # repopulated complete data-set
@@ -691,10 +693,16 @@ fixed, for it is not necessarily crucial because all questions are over
 the same 7 item scale. So if we consider the Assortment factor, a 1 unit
 increase in Im1 will increase Im2 by 0.80.
 
-We also see that the factors variances are scaled to 1.
+We also see that the factors variances are scaled to 1, and that the
+residuals of the Images ( because they have the dot . in front of the
+name) have a variance, because as stated before they are being predicted
+by the latent factors.
 
-The standardised loadings are all above 0.6. Those values if squared
-represent the item's variance that is explained through the construct.
+The standardised loadings are all above 0.6 ( scaled as well and
+therefore comparable, with -1 as minimum values and 1 as maximum value),
+meaning that the Images in each factors are good indicators for the
+latent variables. Those values if squared represent the item's variance
+that is explained through the construct.
 
 We plot our model:
 
@@ -764,7 +772,12 @@ items are sufficiently reliable.
 
 ### Introduction of mediators
 
-We proceed with a stepwise construction of the model.
+We proceed with a stepwise construction of the model, which is
+structural since we are introducing a relationship between latent
+variables.
+
+The paths between latent variables ( so the factors, the mediator COM
+and SAT) are modelled as regression paths.
 
 ```{r}
 construct_m <- "
@@ -782,7 +795,7 @@ Professionalism=~Im16+Im19
 COM=~COM_A1+COM_A2+COM_A3+COM_A4
 SAT=~SAT_1+SAT_2+SAT_3
 
-# Paths from factors to mediators
+# Paths from factors to mediators (latent to latent)
 COM ~ a*Assortment + b*French_lifestyle + c*Shop_experience + d*Organization + e*Luxury + f*Coolness + g*Food + h*Professionalism
 
 SAT ~ i*Assortment + l*French_lifestyle + m*Shop_experience + n*Organization + o*Luxury + p*Coolness + q*Food + r*Professionalism
@@ -841,6 +854,10 @@ cronbach(subset(df1, select = c(SAT_1:SAT_3)))$alpha
 Customer Satisfaction coded as SAT Affective Commitment coded as COM
 
 Repurchase Intention coded as C_REP Cocreation Intention C_CR.
+
+The paths between latent variables ( so the factors, the mediator COM
+and SAT, and the outcomes C_REP and C_CR ) are modelled as regression
+paths.
 
 `allora questo cancellalo, ma ci sono delle espressioni che ho scritto che sono commented out perchè redundant per R. ho fatto riferimento alla slide 28 dell folder 04 delle slide.`
 
