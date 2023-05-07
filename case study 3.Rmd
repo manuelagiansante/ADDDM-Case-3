@@ -47,23 +47,22 @@ We investigate missing values in the data, we know that missing values
 have been coded as "999" in the dataset:
 
 ```{r}
-# percentage of missing data
-mean(df == 999)
-df1 <- data.frame(sapply(df,function(x) ifelse((x == 999),NA,as.numeric(x))))
+# replacing 999 by NA values
+df1 <- df
+df1[df1 == 999] <- NA
 
-# Replace NA with column mean
-for (i in 1:ncol(df1)) {
-  col_mean <- mean(df1[,i], na.rm = TRUE)
-  df1[is.na(df1[,i]), i] <- col_mean
-}
-
-# separate dataframe only with the questionnaire data
+# separating dataframe only with the questionnaire data
 df2 <- df1[,c(1:22)]
+
+# proportion of rows containing NA values
+1 - nrow(na.omit(df2)) / nrow(df2)
+
+# deleting rows with NAs
+df2 <- na.omit(df2)
+nrow(df2)
 ```
 
-We have almost 3% of missing data, deleting it would mean we would work
-with a little more than half the data we have now. We therefore replace
-the 999 values with the column mean.
+As it was instructed, we delete the rows containing missing values. This represents 30% of our dataset, which is quite a high amount. We are left with 385 rows
 
 We first plot the variables to have a sense of how client perception is
 skewed.
@@ -73,7 +72,8 @@ skewed.
 par(mfrow = c(3, 3))
 for (col in c(1:ncol(df2))){ 
   plotNormalHistogram(df2[col],main = paste("Frequency Distribution of Im", col))
-  }
+}
+rm(col)
 ```
 
 For most questions the distribution is skewed to the left, answers
@@ -82,8 +82,7 @@ for question number 7 asking whether Galeries Lafayette Berlin embody
 French Savoir-vivre for the client, none has answered "not at all",
 because the range of the distribution starts from 2. Question 10 about
 whether the Galeries represent gourmet food has also received no
-completely negative answers answering not at all signals that brand
-identity **END OF SENTENCE?**
+completely negative answers.
 
 We run a correlation matrix so to see if we can individuate some
 groupings in our variables.
@@ -98,30 +97,44 @@ are a first suggestions of what kind of factors we can identify. We
 check the description files to see if the clusters are thematically
 coherent:
 
--   `Im8`, `Im10`, `Im14`: They all regard food and the quality of food
+- `Im8`, `Im10`, `Im14`: They all regard food and the quality of food
     (French cuisine, gourmet food);
 
--   `Im6`, `Im7`: French Lifestyle;
+- `Im6`, `Im7`: French Lifestyle;
 
--   `Im12`, `Im13`: Luxury and designer brands;
+- `Im12`, `Im13`: Luxury goods and brands;
 
--   `Im20`, `Im21`, `Im22`: They are about the feeling of the shopping
+- `Im20`, `Im21`, `Im22`: They are about the feeling of the shopping
     experience, so whether the customer feels at ease;
 
--   `Im16`, `Im19`: They are about the perception of professionalism;
+- `Im16`, `Im19`: They are about the perception of professionalism;
 
--   `Im15`, `Im1`, `Im2`: They cover the brand/product assortment;
+- `Im15`, `Im1`, `Im2`: They cover the brand/product assortment;
 
--   `Im18`, `Im17`: Describe how on trend the Galeries are perceived to
+- `Im18`, `Im17`: Describe how on trend the Galeries are perceived to
     be;
 
--   `Im5`, `Im3`, `Im4`: Measure how the client perceives the
+- `Im5`, `Im3`, `Im4`: Measure how the client perceives the
     decorations and arrangement of the shopping areas.
 
 Variables `Im9` and `Im11` seem to stand on their own in terms of
-correlations, the questions concern French Fashion and French Cosmetics
-respectively. Especially the latter one seems to be isolated in terms of
-correlation and meaning.
+correlations, they concerns French fashion and cosmetics respectively. `Im9` in particular has no strong correlation with any other variable.
+
+We display the highest correlation any variable has with variables except itself.
+
+```{r}
+var_cors <- apply(upper.tri(raqMatrix)*raqMatrix + lower.tri(raqMatrix)*raqMatrix,2,max)
+ggplot(mapping = aes(x = reorder(names(var_cors), var_cors), y = var_cors)) +
+  geom_col() +
+  theme_classic() +
+  scale_y_continuous(limits = c(0,1), breaks = seq(0, 1, 0.1)) +
+  labs(x = "Variable",
+       y = "Highest correlation",
+       title = "Highest correlation of variables with other variables")
+rm(var_cors)
+```
+
+Clearly, there are two considerable jumps between `Im9`, `Im11` and the rest of variables. We need to look out for these two variables and assess whether they should be included in our model or not.
 
 We compute the Kaiser-Meyer-Olkin test.
 
@@ -179,7 +192,7 @@ and there are strong correlations among the variables.
 # Exploratory Factor Analysis with Principal Axis Factoring
 
 
-We explore models with 1 to 15 factors, as adding more factors results in an error. And plot some key measures which asses how well the model represents the underlying structure of our dataset.
+We explore models with 1 to 10 factors, as adding more factors results in an error. And plot some key measures which asses how well the model represents the underlying structure of our dataset.
 For clarity, we describe the criteria used below, to facilitaty comprehension:
 
 -   fit, which measures how well the factor model reproduces the
@@ -199,13 +212,13 @@ For clarity, we describe the criteria used below, to facilitaty comprehension:
 
 ```{r}
 # we initiate and empty dataframe which will record our criteria values
-fit_df <- matrix(nrow = 15, ncol = 6)
+fit_df <- matrix(nrow = 10, ncol = 6)
 colnames(fit_df) <- c("fit", "objective", "RMSEA", "crms", "TLI", "BIC")
 fit_df <- as.data.frame(fit_df)
 
 # we compute the factor analysis for nfactors 
-for (i in 1:15) {
-  FA <- fa(df2, nfactors = i, rotate = "varimax", fm = "pa", SMC = FALSE)
+for (i in 1:10) {
+  FA <- fa(df2, nfactors = i, rotate = "varimax", fm = "pa")
   fit_df[i, 1] <- FA$fit
   fit_df[i, 2] <- FA$objective
   fit_df[i, 3] <- FA$RMSEA[1]
@@ -213,21 +226,22 @@ for (i in 1:15) {
   fit_df[i, 5] <- FA$TLI
   fit_df[i, 6] <- FA$BIC
 }
-
 ```
 
 ```{r}
 fit_df %>% gather() %>%                 
-  ggplot(aes(x = rep(1:15, ncol(fit_df)), y = value)) +
+  ggplot(aes(x = rep(1:10, ncol(fit_df)), y = value)) +
   facet_wrap(~ key, scales = "free") +
   geom_point() +
   theme_classic() +
-  scale_x_continuous(breaks = seq(1, 15, 1)) +
+  scale_x_continuous(breaks = seq(1, 10, 1)) +
   geom_vline(xintercept = 8, linetype = "dashed") +
   geom_vline(xintercept = 9, linetype = "dashed") +
   labs(title = "Various criteria for Principal Axis Factoring",
        x = "Number of factors",
        y = "")
+
+rm(FA, fit_df, i)
 ```
 
 It seems that the number of factors we want to try and fit is 8 or 9.
@@ -237,17 +251,19 @@ It seems that the number of factors we want to try and fit is 8 or 9.
 We start fitting our first models, of course selecting our final model
 will be a process of trial and error.
 
+We try models with 8 or 9 factors and with or without `Im9` and `Im11`.
+
 ```{r, message=FALSE}
 # including all images
 FA9 <- fa(df2, nfactors = 9, rotate = "varimax", fm = "pa")
 FA8 <- fa(df2, nfactors = 8, rotate = "varimax", fm = "pa")
 
 # without images 9 an 11
-FA9_119 <- fa(df2[, -c(9,11)], nfactors = 9, rotate = "varimax", fm = "pa")
-FA8_119 <- fa(df2[, -c(9,11)], nfactors = 8, rotate = "varimax", fm = "pa")
+FA9_119 <- fa(df2[, -c(9, 11)], nfactors = 9, rotate = "varimax", fm = "pa")
+FA8_119 <- fa(df2[, -c(9, 11)], nfactors = 8, rotate = "varimax", fm = "pa")
 ```
 
-We print the loadings of these models in heatmaps:
+We print the loadings of these models as heatmaps:
 
 ```{r}
 par(mfrow = c(2,2))
@@ -269,130 +285,79 @@ corrplot(t(FA9_119$loadings),
          mar = c(0, 1, 3, 0))
 ```
 
-When plotting the loadings of all the models we estimated, we notice that the
-full models perform badly on the loadings for `Im9` on factor 2,
-`Im11` is not as low on factor 5 but it is not brilliant.
+When plotting the loadings of all the models we estimated, we notice that for the two full models, `Im9` has no strong loadings on any factor. `Im11` seems to be loaded on factor 4, which is the construct related to luxury. As `Im11` mentions high quality cosmetics, this kind of products can be related to the luxury milieu.
 
-We laso notice that `Im8`, `Im15` and `Im19` seem to have difficulties, they are partially loaded onto multiple factors or not loaded very strongly on one factor. We have to investigate these questions further.
+When looking at the factors, we see that both models with 9 factors have no strong loadings on factor 9, which indicates that models with 8 are probably more suited for our data.
+
+We also notice that `Im8`, `Im15` and `Im19` seem to have difficulties, they are partially loaded onto multiple factors or not loaded very strongly on one factor. We have to investigate these questions further. To do so, we look at their descriptions.
+
+```{r}
+descriptions[c(8,15,19),]
+```
+
 
 - `Im8` assesses the "Expertise in French traditional cuisine". Thus, it loads both on the construct we called *French lifestyle* and onto *Food*.
-- `Im15` asseses the "Professional selection of brands". Thus, it loads on both *Product assortment* and *Professionalism*.
+- `Im15` assesses the "Professional selection of brands". Thus, it loads on both *Product assortment* and *Professionalism*.
 - `Im19` assesses whether Galeries Lafayette are a "Professional organisation". This is under the *Professionalism* construct as well, but its loading is overall weaker.
 
 
-### Models without Image 9 (9 and 8 factors)
+## Models without Image 9 (8 and 9 factors)
 
 We investigate what the loadings look like in case we only take out the
-Im9:
+`Im9`:
 
 ```{r}
-FA9_9 <- fa(df2[, -c(9)], nfactors = 9,rotate="varimax", fm = "pa")
 FA8_9 <- fa(df2[, -c(9)], nfactors = 8, rotate = "varimax", fm = "pa")
+FA9_9 <- fa(df2[, -c(9)], nfactors = 9, rotate = "varimax", fm = "pa")
 
-par(mfrow = c(1,2))
+par(mfrow = c(2,1))
 corrplot(t(FA8_9$loadings),
          tl.cex = 0.7,
-         title = "PAF with 9 factors excluding im9 \n Loadings",
+         title = "Loadings of PAF with 8 factors excluding im9",
          mar = c(0, 1, 3, 0))
 corrplot(t(FA9_9$loadings),
          tl.cex = 0.7,
-         title = "PAF with 9 factors excluding im9 \n Loadings",
+         title = "Loadings of PAF with 9 factors excluding im9",
          mar = c(0, 1, 3, 0))
+par(mfrow = c(1,1))
 ```
 
-The performance of Im11 in terms of loadings on factors does not
+The performance of `Im11` in terms of loadings on factors does not
 improve, which conceptually makes sense because the 2 variables describe
-something quite different. We get rid of the full models and print the
-loadings for remaining ones:
+something quite different.
+
+Again, the model with 9 factors does not have any strong loading on its last factor. Therefore, we decide to continue the analysis for now by comparing only with our models which have 8 factors and which exclude at least `Im9`, i.e. `FA8_9` and `FA8_119`. All other models will be dropped from further analysis.
+
+```{r}
+rm(FA8, FA9, FA9_9, FA9_119)
+```
+
+We display the loadings of our two remaining models numerically, with a cutoff at 0.3.
 
 ```{r}
 print(FA8_9$loadings, cutoff = 0.3, sort = TRUE)
-print(FA9_9$loadings, cutoff = 0.3, sort = TRUE)
-print(FA9_119$loadings, cutoff = 0.3, sort = TRUE)
 print(FA8_119$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-Im8 loading on PA2 is quite low, we keep that in mind for further
-analysis.
+The two models are quite similar, but we can see that the loading associated to variable `Im11` inside `FA8_9` is under 0.6. Moreover, the portion of variance explained by the model is 0.771 for `FA8_9` and 0.787 for `FA8_119`. Thus, `FA8_119` seems to be a better option. 
 
-The model with the highest cumulative variance is the FA9_911, but if we
-observe more carefully we notice that no variables are loading on factor
-PA9. Therefore, the next best option is model FA8_911. The total
-variance explained is 0.763. In this model Im15 and Im19 (very close to
-cut off, respectively 0.464 and 0.312) are partially loading on factors
-PA4 and PA1, we check again their descriptions to understand why that
-might be:
+The three variables mentioned before are still loading onto multiple factors:
+- `Im8` is loading onto Food and French Lifestyle constructs like before;
+- `Im15` is loading onto Product Assortment and Professionalism like before;
+- `Im19` is loading onto Store Arrangement and Professionalism;
+- `Im7` which is part of the French Lifestyle construct, is loading onto the Store Arrangement construct as well, but the difference in magnitude of the loadings is important, unlike with the other three variables above. It maintains a strong attachment to its designated factor.
 
-```{r}
-descriptions[c(15,19),2]
-```
-
-In the correlation matrix they grouped, respectively, with brand
-assortment and perception of professionalism. PA4 in our case describes
-the client perception of arrangement of the Galeries, variable 9 is
-about the organization which logically can be connected. PA1 and
-variable 15 are grouped together in the correlation matrix already which
-is encouraging, they are about brand assortment. We will investigate
-this later on. We will keep these two variables under watch, but for now
-these two variables make sense to be loading on the factors they are
-loading on. Moreover, the correlation of Im15 with the other variales in
-factor 4 struggles to go above 0.5. So at this stage of the exploratory
-analysis we know that the best option if a 8 factor model without images
-9 and 11.
-
-### Why 9 factors are not the best option
-
-We further confirm that the 9 factor model would be superfluous by
-plotting the Scree graph and taking a closer look at the model Eigen
-values:
+We look at the description of question `Im7`.
 
 ```{r}
-# Scree Plot 9_119
-ggplot(mapping = aes(x = 1:length(FA9_119$values),
-                     y = FA9_119$values,
-                     color = (FA9_119$values >= 1))) +
-  geom_point() +
-  geom_hline(yintercept = 1, linetype = "dashed") +
-  theme_classic() +
-  labs(title = "Scree plot of FA9_119",
-       x = "Factor Number",
-       y = "Eigenvalue",
-       color = "Eigenvalue >= 1")
+descriptions[7,]
 ```
+There does not seem to be a particular logical connection between French Savoir-vivre and the the Store Arrangement construct. However, as we have mentioned this is not a huge concern, as `Im7` is strongly anchored to the French Lifestyle construct. Regarding `Im8`, `Im15` and `Im19`, we will have to test models including or excluding them.
 
-Above we have plotted out a Scree plot, which serves the purpose of
-determining the number of factors to retain in the Factor Axis Analysis.
-Factors Eigen values are ordered in a descending order, the method is
-quite subjective but it might provide provide further insight.The scree
-plot for the model FA9_119 suggests, by the elbow rule to cut off at
-factor number 8, which is coherent, we saw how no variable would load on
-the ninth factor. Meaning that PA9 explains no variation in the
-variables, it brings no further aid in explaining the structure of our
-data.
 
-```{r}
-# Print Variances and Eigenvalues
-FA9_119$Vaccounted
-t(FA9_119$values)
-t(cumsum(FA9_119$e.values/ncol(df2)))
-```
+## Further investigation on `FA8_119`
 
-We notice that the proportion explained by factor 9 is extremely low.
-This reinforces how the best option seems to be only retain 8 factors.
-We have also printed out Eigenvalues, which explain how much variance in
-the original variables is explained by the factors. We follow the
-Kaiser-Guttman criterion, the suggested amount of factors to maintain is
-6 when observing the eigenvalues. Now this open new space for
-experimenting with new models with a different number of factors, yet we
-want to point out that the groupings that naturally formed
-
-We briefly recap before moving on with the investigation:
-
--   Model FA8_119 reaches a cumulative variance of 0.763;
--   we need to pay attention to the variables Im15 and Im19;
--   Eigen Values from FA9_119 actually suggest a 6 factors model
-
-### Further investigation on FA8_119
+We display the scree plot for `FA8_119`.
 
 ```{r}
 # Scree Plot FA8_119
@@ -408,181 +373,138 @@ ggplot(mapping = aes(x = 1:length(FA8_119$values),
        color = "Eigenvalue >= 1")
 ```
 
-```{r}
-# Print Variances and Eigenvalues
-FA8_119$Vaccounted
-t(FA8_119$values)
-t(cumsum(FA8_119$e.values/ncol(df2)))
-```
+This plot serves the purpose of
+determining the number of factors to retain in the factor axis analysis.
+Factors' eigenvalues are ordered in a descending order. This method is
+quite subjective but it might provide provide further insight. The elbow rule suggests to cut off the number of factors at 8, which is coherent with what we have seen. However, the Kaiser-Guttman criterion, which indicates to select only factors with eigenvalues greater than 1, would suggest here a model with only five factors. Give the natural groupings we have considered above, this does not seem like an appropriate description of our data's structure. However, this model will still be explored in the following section.
 
-By considering less factors the "elbow rule" turns even more
-conservative, suggesting a four factor model. We test some models with
-less than 8 factors to see if we can outdo the 0.763 explained variance
-of FA8_119.
 
-### Six factors models
+## Model with 5 factors
 
-The first model we run is one with only six factors and without Im9 and
-Im11, because we reached the 6 factor conclusion in models not
-considering those Images.
+We run a model with only 5 factors and without `Im9` and `Im11`, as the scree plot considered above which suggests the 5 factors model did not include those two items.
 
 ```{r}
-FA6_119 <- fa(df2[, -c(9,11)], nfactors = 6,rotate="varimax", fm = "pa")
-print(FA6_119$loadings, cutoff = 0.3, sort = TRUE)
-
+FA5_119 <- fa(df2[, -c(9,11)], nfactors = 5, rotate = "varimax", fm = "pa")
+print(FA5_119$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-The cumulative explained variance does not increase. Im15 and Im19
-increase in terms of loadings, but of course the factors are not the
-same anymore. For example Im6, Im7, Im8, Im10, Im14 are all loading on
-factor2, with high loadings as well.
+The cumulative explained variance of the model decreases. Moreover, factors such as French Lifestyle and Food are merged together, while questions `Im16` and `Im19` have very split loadings between two or three factors. Obviously, this model is not appropriate for our data.
 
 ```{r}
-descriptions[c(6,7,8,10,14)]
+rm(FA8_9, FA5_119)
 ```
 
-When we recall what aspects these questions cover we see that a "French
-lifestyle" theme has been clustered together with Gourmet Food, which
-are aspects that not necessarily go together. These images cover very
-different subjects, the 6 factor models pulls together variables that
-should not go together. Referring back to the original correlation plot,
-Im8 and Im7 correlation is quite high, but for the other variables the
-correlation between them is quite underwhelming. This high interaction
-between Im8 and Im7 is probably what drives the forming of this factor
-2.
 
-So for now we set aside 6 factor models, but will proceed in
-investigating more regarding Im15 and Im19.
+Thus, we drop this possible type of model to concentrate on the analysis of variables `Im8`, `Im15` and `Im19`.
 
-### Variables Im15 and Im19, 8 factors
+## Models including and excluding variables `Im8`, `Im15` and `Im19`.
 
-#### Exclude both Im15 and Im19
+We remind the reader that these three variables in the `FA8_119` model had split loadings onto 
+were loadings on factors that make logical sense, but the values of loadings were quite close to the 0.3 cut-off.
 
-So we remind the reader that these two variables in the FA8_119 model
-were loadings on factors that make logical sense, but the loadings
-values were quite close to the 0.3 cut-off.
+We explore all combinations of models with 8 factors and with or without the three items of interest.
 
 ```{r}
-FA8_1191519 <- fa(df2[, -c(9,11,15,19)], nfactors = 8,rotate="varimax", fm = "pa")
-print(FA8_1191519$loadings, cutoff = 0.3, sort = TRUE)
+FA8_119_81519 <- fa(df2[, -c(9,11,8,15,19)], nfactors = 8, rotate = "varimax", fm = "pa")
+FA8_119_815   <- fa(df2[, -c(9,11,8,15)],    nfactors = 8, rotate = "varimax", fm = "pa")
+FA8_119_819   <- fa(df2[, -c(9,11,8,19)],    nfactors = 8, rotate = "varimax", fm = "pa")
+FA8_119_1519  <- fa(df2[, -c(9,11,15,19)],   nfactors = 8, rotate = "varimax", fm = "pa")
+FA8_119_8     <- fa(df2[, -c(9,11,8)],       nfactors = 8, rotate = "varimax", fm = "pa")
+FA8_119_15    <- fa(df2[, -c(9,11,15)],      nfactors = 8, rotate = "varimax", fm = "pa")
+FA8_119_19    <- fa(df2[, -c(9,11,19)],      nfactors = 8, rotate = "varimax", fm = "pa")
 ```
 
-The cumulative explained variance has increased to 0.771 by running a 8
-factor model excluding Im9, Im11, Im15, Im19. What happens here is that
-now Im16 (Professional appearance towards customer) now has a very close
-to cut off loading on factor 1 (with Im3, Im4, Im5) which models
-decoration and arrangement. All of these have to do with appearence from
-a client point of view.
 
-What we observe now that we are back considering 8 factors models, is
-that Im8 still has a quite low loading.
 
-#### Excluding Im19
+### Models excluding one variable
 
-We try running a model without the Im19 because it was the variable with
-the lowest loading value in FA8_119.
+We plot the loadings and print them numerically for `FA8_119_8`, `FA8_119_15` and `FA8_119_19`.
 
 ```{r}
-FA8_11919 <- fa(df2[, -c(9,11,19)], nfactors = 8,rotate="varimax", fm = "pa")
-print(FA8_11919$loadings, cutoff = 0.3, sort = TRUE)
-
+par(mfrow = c(3,1))
+corrplot(t(FA8_119_8$loadings),
+         tl.cex = 0.7,
+         title = "Loadings of PAF with 8 factors excluding Images 9, 11 and 8",
+         mar = c(0, 1, 3, 0))
+corrplot(t(FA8_119_15$loadings),
+         tl.cex = 0.7,
+         title = "Loadings of PAF with 8 factors excluding Images 9, 11 and 15",
+         mar = c(0, 1, 3, 0))
+corrplot(t(FA8_119_19$loadings),
+         tl.cex = 0.7,
+         title = "Loadings of PAF with 8 factors excluding Images 9, 11 and 19",
+         mar = c(0, 1, 3, 0))
+par(mfrow = c(1,1))
 ```
 
-The cumulative variance falls in between FA8_911 and FA8_9111519.This
-model for now we set aside. Im15 is split between three factor with very
-low loadings, the question regard professional selection of brand.
-Thematically maybe it explores an aspect of client perception that
-should be investigated further.
-
-#### Excluding Im15
 
 ```{r}
-FA8_11915 <- fa(df2[, -c(9,11,15)], nfactors = 8,rotate="varimax", fm = "pa")
-print(FA8_11915$loadings, cutoff = 0.3, sort = TRUE)
-
+print(FA8_119_8$loadings, cutoff = 0.3, sort = TRUE)
+print(FA8_119_15$loadings, cutoff = 0.3, sort = TRUE)
+print(FA8_119_19$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-We exclude Im15 the explained variance by the model is in parity with
-the "slimmer" model FA8_9111519. Im19 loads on two different factors 4
-and 8. Factor 8 would form at the start as well when simply observing
-correlations, it deals with professionalism. Both loadings on both
-factors are below 0.7 which is not necessarily good.
+All three models have a total explained variance which has improved when compared to `FA8_119`. The biggest improvement is when removing `Im15`. However, we see that in all three models, the two remaining variables of interest are still loading between various factors, with no remarkable attachment to a particular one. Thus, we probably will get more satisfying results when looking at models excluding two variables.
 
-Now at this stage our choice is between a model that sacrifices more
-information and one that includes one more variable, but the over all
-explained variance is almost the same.
+### Models excluding two variables
+
+We plot the loadings and print them numerically for `FA8_119_815`, `FA8_119_819` and `FA8_119_1519`.
 
 ```{r}
-FA8_1191519$Vaccounted
-FA8_11915$Vaccounted
+par(mfrow = c(3,1))
+corrplot(t(FA8_119_815$loadings),
+         tl.cex = 0.7,
+         title = "Loadings of PAF with 8 factors excluding Images 9, 11, 8 and 15",
+         mar = c(0, 1, 3, 0))
+corrplot(t(FA8_119_819$loadings),
+         tl.cex = 0.7,
+         title = "Loadings of PAF with 8 factors excluding Images 9, 11, 8 and 19",
+         mar = c(0, 1, 3, 0))
+corrplot(t(FA8_119_1519$loadings),
+         tl.cex = 0.7,
+         title = "Loadings of PAF with 8 factors excluding Images 9, 11, 15 and 19",
+         mar = c(0, 1, 3, 0))
+par(mfrow = c(1,1))
 ```
 
-In FA8_11915 factor 8 has a higher Proportion Var.
-
-Communalities are the shared variability with the factors.
 
 ```{r}
-FA8_1191519$communality
-FA8_11915$communality
+print(FA8_119_815$loadings, cutoff = 0.3, sort = TRUE)
+print(FA8_119_819$loadings, cutoff = 0.3, sort = TRUE)
+print(FA8_119_1519$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-In the case of Im19 0.5841990 of its variability is explained by the
-factor it is loading on (PA4 and PA8) in FA8_11915. In the FA8_1191519
-communalities the lowest communality is the one of Im5, its loading on
-factor 1 in the model 0.64 both values are below acceptability
-thresholds, but removing Im5 from factor one would not make much sense
-in terms of themes covered.
+Here, model `FA8_119_815` outperforms the other two. Its explained variance is the highest we have seen yet, at 0.800, and the loadings are clear for all variables. This is the first instance of variable `Im19` having a loading which is above the usual 0.6 cutoff. This is a good sign. The other two models still exhibits split loadings for the three problematic variables. 
 
-In FA8_11915 PA4 -\> decoration and arrangement PA8 -\> professional
-appearance
+### Model excluding the three variables
+
 
 ```{r}
-descriptions[c(16,19),]
+corrplot(t(FA8_119_81519$loadings),
+         tl.cex = 0.7,
+         title = "Loadings of PAF with 8 factors excluding Images 9, 11, 8, 15 and 19",
+         mar = c(0, 1, 3, 0))
 ```
-
-Thematically it would makes sense to retain Im19 as a variable, given
-that PA8 in FA8_11915 has a higher SS loading, and the actual cumulative
-variance of the model is slightly higher than FA8_1191519. The loadings
-of Im19 are low, we would have Im16 with low loadings as well, and the
-two thematically should go together.
-
-### Considering Im8
-
-One last thing we have not considered up until now variable Im8, which
-shows low loadings both in FA8_1191519 and in FA8_11915. There are a few
-reasons why we are considering this now, first for clarity of the
-reader. We have first decided between 8 and 9 factors, we tried the 6
-factors route and finally we digged deeper on how to best select between
-Im15 and Im19.
-
-Moreover, when we decided to retain Im19 was because otherwise the Im16
-loadings would be too low. With FA8_11915 we reach an acceptable
-explained variance, yet Im8 continues to have low loadings on PA2 and
-PA7.
 
 ```{r}
-descriptions[8,2]
+print(FA8_119_81519$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-The matter covered by Im8 seems to both touch the food theme and the
-French lifestyle thematic. It seems like this question blurs factors
-domains, we run a model without to see if it is worth it keeping it in
-our model.
+When excluding all three variables, we see that `Im16` becomes loaded by itself onto one factor, and its loading is split between three factors. This is due to the fact that `Im19` is essential to form a factor together with `Im16`. The total explained variance is very slightly higher than before, but a difference of 0.001 is not a good trade-off to accepting split loadings in `Im16`.
+
+
+## Final model of choice
+
+As we have shown, the best model we have found is `FA8_119_815`. It has an explained variance of 80% and all factor loadings are clear and above 0.6. We remove all other models.
 
 ```{r}
-FA8_119158 <- fa(df2[, -c(8,9,11,15)], nfactors = 8,rotate="varimax", fm = "pa")
-print(FA8_119158$loadings, cutoff = 0.3, sort = TRUE)
+rm(FA8_119, FA8_119_8, FA8_119_15, FA8_119_19, FA8_119_819, FA8_119_1519, FA8_119_81519)
 ```
 
-The resulting Cumulative explained variance is higher than FA8_1191519
-and FA8_11915, all loadings are above 0.6. We conclude, our final choice
-of model is FA8_119158.
-
-### Final model of choice
 
 #### 1. What are the dimensions by which Galeries Lafayette is perceived?
 
-Our final choice if FA8_11915. The 8 factors identified are:
+Our final choice if `FA8_119158.` The 8 factors identified are:
 
 **Factor 1:** Assortment
 
@@ -736,7 +658,7 @@ We want to try and understand why the Chi-Square test was significant.
 Overall, the model we design through EFA is good.
 
 ```{r}
-modindices(construct,minimum.value = 10, sort=TRUE)
+modindices(fit,minimum.value = 10, sort=TRUE)
 ```
 
 The `mi` values are not super high which is comforting, we try to add
