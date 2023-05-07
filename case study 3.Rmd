@@ -794,35 +794,6 @@ semPaths(fitm, what = "path", whatLabels = "std", style = "lisrel",fade=TRUE,
 The path linking COM and SAT is because we are allowing for the two to
 predict each-other.
 
-#### Mediators Construct Reliability
-
-**Cronbach's alpha**
-
-```{r}
-cronbach(subset(df1, select = c(COM_A1:COM_A4)))$alpha
-cronbach(subset(df1, select = c(SAT_1:SAT_3)))$alpha
-```
-
-**CR**
-
-```{r}
-std.loadings<- inspect(fitm, what="std")$lambda
-check=std.loadings
-check[check>0] <- 1
-std.loadings[std.loadings==0] <- NA
-std.loadings2 <- std.loadings^2
-std.theta<- inspect(fitm, what="std")$theta
-
-sum.std.loadings<-colSums(std.loadings, na.rm=TRUE)^2
-sum.std.theta<-rowSums(std.theta)
-sum.std.theta=check*sum.std.theta
-CR=sum.std.loadings/(sum.std.loadings+colSums(sum.std.theta))
-CR
-
-```
-
-Both measures are high without being redundant.
-
 
 ### Introduction of mediators and outcomes + paths
 
