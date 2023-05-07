@@ -600,7 +600,7 @@ summary(fit, fit.measures=TRUE, standardized=TRUE)
 
 We analyse the output.
 
--   Chi-square/df= 1.85 which is good is should be below 3 or below 5
+-   Chi-square/df= 1.90 which is good is should be below 3 or below 5
     for a 1000 observations sample (we have 533), this indicates a good
     fit. The p-value for the Chi-square statistic is 0.00, we reject the
     null hypothesis (exact fit$\Sigma(\theta)=\Sigma$) which means that
@@ -630,7 +630,7 @@ is over-identified). Moreover, what this fixing to 1 does is that is
 scales the loadings (and the variances) to the scale of that item being
 fixed, for it is not necessarily crucial because all questions are over
 the same 7 item scale. So if we consider the Assortment factor, a 1 unit
-increase in Im1 will increase Im2 by 0.80.
+increase in Im1 will increase Im2 by 0.88.
 
 We also see that the factors variances are scaled to 1, and that the
 residuals of the Images ( because they have the dot . in front of the
@@ -684,12 +684,6 @@ summary(fit2, fit.measures=TRUE, standardized=TRUE)
 We report only the first covariance introduction (others were
 performed), very little have changed in terms of performance metrics. We
 keep the model as it is.
-
-```{r}
-x<-summary(fit2, fit.measures=TRUE, standardized=TRUE)
-#Explained variance
-(x$pe$std.all)^2
-```
 
 #### Reliability
 
@@ -938,7 +932,7 @@ Food_CR:=qq+wg+zq
 Prof_CR:=rr+wh+zr
 "
 
-fit3<-cfa(construct3, data=df1)
+fit3<-cfa(construct3, data=df1, missing="ML")
 summary(fit3, fit.measures=TRUE, standardized=TRUE)
 
 
@@ -951,14 +945,19 @@ summary(fit3, fit.measures=TRUE, standardized=TRUE)
 -   CFI and TFI above 0.95
 
 -   RMSEA measures the degree of misspecification of the model, it
-    measures 0.034, which is below the 0.05 indicating that our model is
+    measures 0.036, which is below the 0.05 indicating that our model is
     a close fit to the true model.
 
 -   acceptability threshold
 
--   SRMR 0.041
+-   SRMR 0.043
 
-All latent variables have std.all above 0.6
+All latent variables have std.all above 0.6.
+
+```{r}
+
+```
+
 
 ```{r}
 lavaanPlot(name="plot", fit3, labels = NULL)
@@ -980,7 +979,6 @@ semPaths(fit3, what="path", whatLabels="std")
 
 ```{r}
 construct_trial <- "
-
 # MEASUREMENT MODELS
 # Factors
 Assortment=~Im1+Im2
@@ -1011,11 +1009,55 @@ C_REP  ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury
 
 C_CR ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury + Coolness + Food + Professionalism + COM + SAT"
 
-fit_trial<- sem(construct_trial, data=df1)
+fit_trial<- sem(construct_trial, data=df1, missing="ML")
 summary(fit_trial,fit.measures=TRUE, standardized=TRUE)
 
 
 ```
+
+#### Local Fit
+
+```{r}
+std.loadings<- inspect(fit3, what="std")$lambda
+check=std.loadings
+check[check>0] <- 1
+std.loadings[std.loadings==0] <- NA
+std.loadings2 <- std.loadings^2
+std.theta<- inspect(fit3, what="std")$theta
+
+
+#Individual item Reliability
+IIR=std.loadings2/(colSums(std.theta)+std.loadings2)
+IIR
+
+```
+
+#### Composite Reliability
+```{r}
+sum.std.loadings<-colSums(std.loadings, na.rm=TRUE)^2
+sum.std.theta<-rowSums(std.theta)
+sum.std.theta=check*sum.std.theta
+CR=sum.std.loadings/(sum.std.loadings+colSums(sum.std.theta))
+CR
+```
+
+
+#### Average Variance Extracted
+
+```{r}
+std.loadings<- inspect(fit3, what="std")$lambda
+std.loadings <- std.loadings^2
+AVE=colSums(std.loadings)/(colSums(sum.std.theta)+colSums(std.loadings))
+AVE
+```
+
+
+```{r}
+std_fit1=inspect(fit3, "std")
+std_fit1$psi^2
+```
+
+
 
 #### 2.Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
 
