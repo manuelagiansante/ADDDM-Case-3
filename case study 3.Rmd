@@ -34,22 +34,22 @@ library(psy)
 library(lavaanPlot)
 ```
 
-## Galeries Lafayette
+# Data Exploration and Preprocessing
 
 We load the data files.
 
 ```{r}
 descriptions <- fread("Variables and Labels_Galeries Lafayette.csv")
 df <- read.csv("Case Study III_Structural Equation Modeling.csv")
-
 ```
 
 We investigate missing values in the data, we know that missing values
 have been coded as "999" in the dataset:
 
 ```{r}
-mean(df==999)# percentage of missing data
-df1<- data.frame(sapply(df,function(x) ifelse((x==999),NA,as.numeric(x))))
+# percentage of missing data
+mean(df == 999)
+df1 <- data.frame(sapply(df,function(x) ifelse((x == 999),NA,as.numeric(x))))
 
 # Replace NA with column mean
 for (i in 1:ncol(df1)) {
@@ -57,18 +57,15 @@ for (i in 1:ncol(df1)) {
   df1[is.na(df1[,i]), i] <- col_mean
 }
 
-# separate dataframe only with the questionaire data
-df2<- df1[,c(1:22)]
-
+# separate dataframe only with the questionnaire data
+df2 <- df1[,c(1:22)]
 ```
 
 We have almost 3% of missing data, deleting it would mean we would work
 with a little more than half the data we have now. We therefore replace
 the 999 values with the column mean.
 
-## Exploratory Factor Analysis
-
-We first plot the variables so to have a sense of how client perception
+We first plot the variables to have a sense of how client perception
 is skewed.
 
 ```{r}
@@ -87,6 +84,7 @@ because the range of the distribution starts from 2. Question 10 about
 whether the Galeries represent gourmet food has also received no
 completely negative answers answering not at all signals that brand
 identity
+**END OF SENTENCE?**
 
 We run a correlation matrix so to see if we can individuate some
 groupings in our variables.
@@ -101,41 +99,45 @@ are a first suggestions of what kind of factors we can identify. We
 check the description files to see if the clusters are thematically
 coherent:
 
--   Im8, Im10, Im14: They all regard food and the quality of food
+-   `Im8`, `Im10`, `Im14`: They all regard food and the quality of food
     (French cuisine, gourmet food);
 
--   Im6, Im7: French Lifestyle;
+-   `Im6`, `Im7`: French Lifestyle;
 
--   Im12, Im13: Luxury and designer brands;
+-   `Im12`, `Im13`: Luxury and designer brands;
 
--   Im20,Im21, Im22: They are about the feeling of the shopping
+-   `Im20`, `Im21`, `Im22`: They are about the feeling of the shopping
     experience, so whether the customer feels at ease;
 
--   Im16, Im19: They are about the perception of professionalism;
+-   `Im16`, `Im19`: They are about the perception of professionalism;
 
--   Im15, Im1, Im2: They cover the brand/ product assortment;
+-   `Im15`, `Im1`, `Im2`: They cover the brand/product assortment;
 
--   Im18, Im17: Describe how on trend the Galeries are perceived to be;
+-   `Im18`, `Im17`: Describe how on trend the Galeries are perceived to be;
 
--   Im5, Im3, Im4: Measure how the client perceives the decorations and
+-   `Im5`, `Im3`, `Im4`: Measure how the client perceives the decorations and
     arrangement of the shopping areas.
 
-Variables Im9, Im11 seem to stand on their own in terms of correlations,
-in this order the respective questions concern French Fashion and French
-Cosmetics. Especially the latter one seems to be isolated in terms of
+Variables `Im9` and `Im11` seem to stand on their own in terms of correlations,
+the questions concern French Fashion and French
+Cosmetics respectively. Especially the latter one seems to be isolated in terms of
 correlation and meaning.
+
+We compute the Kaiser-Meyer-Olkin test.
 
 ```{r}
 # Kaiser factor adequacy
 KMO(df2)
 ```
 
-We computed the Overall measure sampling adequacy is 0.88 the variables
-seem adequate enough for factor analysis. The lowest MSA is achieved by
-Im2, but still it is a quite high value so we should not worry too
-much.Moreover, the correlation grouping it formed with Im15 and Im1 had
-a strong common theme. Im9 and Im11 both have high MSA which given that
-they stood on their own in the correlation matrix it is reassuring.
+The overall Measure of Sampling Adequacy is 0.88. The variables
+seem adequate enough for factor analysis. According to Kaiser, a MSA in the .80s is "meritorious". The lowest MSA is achieved by
+`Im2`, but still it is a quite high value so we should not worry too
+much.Moreover, the correlation grouping it formed with `Im15` and I``m1 had
+a strong common theme. `Im9` and `Im11` both have high MSA despite them
+standing on their own in the correlation matrix, so it is reassuring.
+
+We plot a bar chart of the unique variance of each variable.
 
 ```{r}
 anti_mat_diag = data.frame("Question" = 1:22,
@@ -150,14 +152,15 @@ ggplot(data = anti_mat_diag, aes(x = Question, y = UniqueVar)) +
        y = "Proportion of unique variance")
 ```
 
-We plot a bar chart of the unique variances, there not seem to be very
-big outliers, yet Im9 and Im11 do stand out, we saw how those questions
-were unique in terms of the matter addressed, so definitely the
-questionnaire could be improved by going deeper into the french fashion
-and french cosmetics subjects. This is also considering that marketing
-wise these 2 are very high selling points especially for tourists who
-might come and look for something more "peculiar" and identifiable as
+There doesn't seem to be very
+big outliers, but `Im9` and `Im11` do stand out. We saw how those questions
+were unique in terms of the matter addressed, so the
+questionnaire definitely could be improved by going deeper into the french fashion
+and french cosmetics subjects. This is also important considering that marketing-wise these two subjects are very high selling points especially for tourists who
+might come and look for something more authentic and identifiable as
 being from Paris.
+
+We use Bartlett's test of sphericity.
 
 ```{r}
 # Barlett's Test of Sphericity
@@ -166,9 +169,11 @@ bart_spher(df2)
 
 We are testing whether the sample of data we have stems from a
 population of uncorrelated variables, meaning the correlation matrix is
-an identity matrix (diagonal of 1s).The test is significant, the
-correlation matrix is not an identity matrix, there is correlation among
+an identity matrix (diagonal of 1s). This is the null hypothesis. Since we get a very small $p$-value under 0.05, the null hypothesis can be rejected, meaning that the
+correlation matrix is not an identity matrix and there are strong correlations among
 the variables.
+
+# Exploratory Factor Analysis
 
 #### Principal Axis Factoring
 
