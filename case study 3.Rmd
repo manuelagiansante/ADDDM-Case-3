@@ -781,6 +781,7 @@ and SAT) are modelled as regression paths.
 
 ```{r}
 construct_m <- "
+# MEASUREMENT MODELS
 # Factors
 Assortment=~Im1+Im2
 French_lifestyle=~Im6+Im7
@@ -795,6 +796,7 @@ Professionalism=~Im16+Im19
 COM=~COM_A1+COM_A2+COM_A3+COM_A4
 SAT=~SAT_1+SAT_2+SAT_3
 
+# STRUCTURAL MODELS
 # Paths from factors to mediators (latent to latent)
 COM ~ a*Assortment + b*French_lifestyle + c*Shop_experience + d*Organization + e*Luxury + f*Coolness + g*Food + h*Professionalism
 
@@ -863,6 +865,8 @@ paths.
 
 ```{r}
 construct3 <- "
+
+# MEASUREMENT MODELS
 # Factors
 Assortment=~Im1+Im2
 French_lifestyle=~Im6+Im7
@@ -881,6 +885,8 @@ SAT=~SAT_1+SAT_2+SAT_3
 C_REP=~ C_REP1+C_REP2+C_REP3
 C_CR=~C_CR1+C_CR2+C_CR3+C_CR4
 
+
+# STRUCTURAL MODELS
 # Paths from factors to mediators
 COM ~ a*Assortment + b*French_lifestyle + c*Shop_experience + d*Organization + e*Luxury + f*Coolness + g*Food + h*Professionalism
 
