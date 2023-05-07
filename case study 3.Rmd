@@ -501,21 +501,28 @@ As we have shown, the best model we have found is `FA8_119_815`. It has an expla
 rm(FA8_119, FA8_119_8, FA8_119_15, FA8_119_19, FA8_119_819, FA8_119_1519, FA8_119_81519)
 ```
 
-
-#### 1. What are the dimensions by which Galeries Lafayette is perceived?
-
-Our final choice if `FA8_119158.` The 8 factors identified are:
-
-**Factor 1:** Assortment
+We display the loadings of our final model again for clarity.
 
 ```{r}
-descriptions[c(1,2)]
+print(FA8_119_815$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-**Factor 2:** French Lifestyle
+
+# FIRST QUESTION: What are the dimensions by which Galeries Lafayette is perceived? Please explain your findings and rationale for your final result.
+
+Our final choice if `FA8_119_815` The 8 factors identified are:
+
+
+**Factor 1:** Organization and Arrangement
 
 ```{r}
-descriptions[c(6,7)]
+descriptions[c(3,4,5)]
+```
+
+**Factor 2:** Food
+
+```{r}
+descriptions[c(10,14)]
 ```
 
 **Factor 3:** Shopping experience
@@ -524,28 +531,28 @@ descriptions[c(6,7)]
 descriptions[c(20,21,22)]
 ```
 
-**Factor 4:** Organization and Arrangement
-
-```{r}
-descriptions[c(3,4,5)]
-```
-
-**Factor 5:** Luxury and Designer brands' presence
-
-```{r}
-descriptions[c(12,13)]
-```
-
-**Factor 6:** "Coolness" factor of the Galerie
+**Factor 4:** "Coolness" factor of the Galerie
 
 ```{r}
 descriptions[c(17,18)]
 ```
 
-**Factor 7:** Food
+**Factor 5:** Assortment
 
 ```{r}
-descriptions[c(10,14)]
+descriptions[c(1,2)]
+```
+
+**Factor 6:** French Lifestyle
+
+```{r}
+descriptions[c(6,7)]
+```
+
+**Factor 7:** Luxury and Designer brands' presence
+
+```{r}
+descriptions[c(12,13)]
 ```
 
 **Factor 8:** Professional appearance
@@ -553,6 +560,30 @@ descriptions[c(10,14)]
 ```{r}
 descriptions[c(16,19)]
 ```
+
+We can rename our eight factors inside the table which describes the total variance and the total explained variance.
+
+```{r}
+colnames(FA8_119_815$Vaccounted) <- c('Organization', 'Experience', 'Assortment', 'Food',
+                                      'France', 'Coolness', 'Luxury', 'Professionalism')
+FA8_119_815$Vaccounted
+```
+
+This allows us to quickly identify which are the most important factors. To facilitate the visualisation, we plot a Pareto chart for the total explained variance (TVE) below.
+
+```{r}
+ggplot(mapping = aes(x = reorder(colnames(FA8_119_815$Vaccounted), -FA8_119_815$Vaccounted[4,]),
+                     y = FA8_119_815$Vaccounted[4,])) +
+  geom_col() +
+  geom_line(aes(x = 1:8, y = FA8_119_815$Vaccounted[5,]), color = "red") +
+  geom_point(aes(x = 1:8, y = FA8_119_815$Vaccounted[5,])) +
+  theme_classic() +
+  labs(x = "Factor",
+       y = "Proportion of TVE",
+       title = "Pareto chart of TVE for FA8_119_815")
+```
+
+Organisation and Experience are the two most important factors in our model, they are the two constructs that people identify the most with Galeries Lafayette. After Experience, there is a small gap, and afterwards factors decrease very slowly in terms of their TVE portion, except for Professionalism at the end which is a bit lower. This means that the way Galeries Lafayette are organized in terms of displays and the atmosphere giving customers a unique experience are the two most important factors for the Galeries.
 
 # Confirmatory Analysis
 
