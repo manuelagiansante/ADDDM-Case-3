@@ -850,6 +850,9 @@ semPaths(fitm, what = "path", whatLabels = "std", style = "lisrel",fade=TRUE,
          curvePivot=TRUE, edge.label.cex = 1, edge.color = "darkblue")
 ```
 
+The path linking COM and SAT is because we are allowing for the two to
+predict each-other.
+
 #### Reliability
 
 ```{r}
@@ -1040,6 +1043,47 @@ semPaths(fit3,what = "path", whatLabels = "std", style = "lisrel",exoCov = T,
 semPaths(fit3, what="std", fade=F, edge.label.cex=1, sizeMan=7, sizeLat=7, exoCov = F, exoVar = F, intercepts = F, rotation = 2)
 
 semPaths(fit3, what="path", whatLabels="std")
+```
+
+```{r}
+construct_trial <- "
+
+# MEASUREMENT MODELS
+# Factors
+Assortment=~Im1+Im2
+French_lifestyle=~Im6+Im7
+Shop_experience=~Im20+Im21+Im22
+Organization=~Im3+Im4+Im5
+Luxury=~Im12+Im13
+Coolness=~Im17+Im18
+Food=~Im10+Im14
+Professionalism=~Im16+Im19
+
+# mediators
+COM=~COM_A1+COM_A2+COM_A3+COM_A4
+SAT=~SAT_1+SAT_2+SAT_3
+
+# Outcomes
+C_REP=~ C_REP1+C_REP2+C_REP3
+C_CR=~ C_CR1+C_CR2+C_CR3+C_CR4
+
+# STRUCTURAL MODELS
+# latent factors(exogenous) to latent mediator (endogenuous)
+COM ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury + Coolness + Food + Professionalism
+
+SAT ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury + Coolness + Food + Professionalism
+
+#latent factors (exogenous) to latent outcome factors (endogenous)
+C_REP  ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury + Coolness + Food + Professionalism +COM +SAT
+
+C_CR ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury + Coolness + Food + Professionalism + COM + SAT"
+
+
+
+fit_trial<- sem(construct_trial, data=df1)
+summary(fit_trial,fit.measures=TRUE, standardized=TRUE)
+
+
 ```
 
 #### 2.Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
