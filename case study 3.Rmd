@@ -62,7 +62,9 @@ df2 <- na.omit(df2)
 nrow(df2)
 ```
 
-As it was instructed, we delete the rows containing missing values. This represents 30% of our dataset, which is quite a high amount. We are left with 385 rows
+As it was instructed, we delete the rows containing missing values. This
+represents 30% of our dataset, which is quite a high amount. We are left
+with 385 rows
 
 We first plot the variables to have a sense of how client perception is
 skewed.
@@ -97,30 +99,32 @@ are a first suggestions of what kind of factors we can identify. We
 check the description files to see if the clusters are thematically
 coherent:
 
-- `Im8`, `Im10`, `Im14`: They all regard food and the quality of food
+-   `Im8`, `Im10`, `Im14`: They all regard food and the quality of food
     (French cuisine, gourmet food);
 
-- `Im6`, `Im7`: French Lifestyle;
+-   `Im6`, `Im7`: French Lifestyle;
 
-- `Im12`, `Im13`: Luxury goods and brands;
+-   `Im12`, `Im13`: Luxury goods and brands;
 
-- `Im20`, `Im21`, `Im22`: They are about the feeling of the shopping
+-   `Im20`, `Im21`, `Im22`: They are about the feeling of the shopping
     experience, so whether the customer feels at ease;
 
-- `Im16`, `Im19`: They are about the perception of professionalism;
+-   `Im16`, `Im19`: They are about the perception of professionalism;
 
-- `Im15`, `Im1`, `Im2`: They cover the brand/product assortment;
+-   `Im15`, `Im1`, `Im2`: They cover the brand/product assortment;
 
-- `Im18`, `Im17`: Describe how on trend the Galeries are perceived to
+-   `Im18`, `Im17`: Describe how on trend the Galeries are perceived to
     be;
 
-- `Im5`, `Im3`, `Im4`: Measure how the client perceives the
+-   `Im5`, `Im3`, `Im4`: Measure how the client perceives the
     decorations and arrangement of the shopping areas.
 
 Variables `Im9` and `Im11` seem to stand on their own in terms of
-correlations, they concerns French fashion and cosmetics respectively. `Im9` in particular has no strong correlation with any other variable.
+correlations, they concerns French fashion and cosmetics respectively.
+`Im9` in particular has no strong correlation with any other variable.
 
-We display the highest correlation any variable has with variables except itself.
+We display the highest correlation any variable has with variables
+except itself.
 
 ```{r}
 var_cors <- apply(upper.tri(raqMatrix)*raqMatrix + lower.tri(raqMatrix)*raqMatrix,2,max)
@@ -134,7 +138,9 @@ ggplot(mapping = aes(x = reorder(names(var_cors), var_cors), y = var_cors)) +
 rm(var_cors)
 ```
 
-Clearly, there are two considerable jumps between `Im9`, `Im11` and the rest of variables. We need to look out for these two variables and assess whether they should be included in our model or not.
+Clearly, there are two considerable jumps between `Im9`, `Im11` and the
+rest of variables. We need to look out for these two variables and
+assess whether they should be included in our model or not.
 
 We compute the Kaiser-Meyer-Olkin test.
 
@@ -191,9 +197,10 @@ and there are strong correlations among the variables.
 
 # Exploratory Factor Analysis with Principal Axis Factoring
 
-
-We explore models with 1 to 10 factors, as adding more factors results in an error. And plot some key measures which asses how well the model represents the underlying structure of our dataset.
-For clarity, we describe the criteria used below, to facilitaty comprehension:
+We explore models with 1 to 10 factors, as adding more factors results
+in an error. And plot some key measures which asses how well the model
+represents the underlying structure of our dataset. For clarity, we
+describe the criteria used below, to facilitaty comprehension:
 
 -   fit, which measures how well the factor model reproduces the
     correlation matrix;
@@ -285,21 +292,33 @@ corrplot(t(FA9_119$loadings),
          mar = c(0, 1, 3, 0))
 ```
 
-When plotting the loadings of all the models we estimated, we notice that for the two full models, `Im9` has no strong loadings on any factor. `Im11` seems to be loaded on factor 4, which is the construct related to luxury. As `Im11` mentions high quality cosmetics, this kind of products can be related to the luxury milieu.
+When plotting the loadings of all the models we estimated, we notice
+that for the two full models, `Im9` has no strong loadings on any
+factor. `Im11` seems to be loaded on factor 4, which is the construct
+related to luxury. As `Im11` mentions high quality cosmetics, this kind
+of products can be related to the luxury milieu.
 
-When looking at the factors, we see that both models with 9 factors have no strong loadings on factor 9, which indicates that models with 8 are probably more suited for our data.
+When looking at the factors, we see that both models with 9 factors have
+no strong loadings on factor 9, which indicates that models with 8 are
+probably more suited for our data.
 
-We also notice that `Im8`, `Im15` and `Im19` seem to have difficulties, they are partially loaded onto multiple factors or not loaded very strongly on one factor. We have to investigate these questions further. To do so, we look at their descriptions.
+We also notice that `Im8`, `Im15` and `Im19` seem to have difficulties,
+they are partially loaded onto multiple factors or not loaded very
+strongly on one factor. We have to investigate these questions further.
+To do so, we look at their descriptions.
 
 ```{r}
 descriptions[c(8,15,19),]
 ```
 
-
-- `Im8` assesses the "Expertise in French traditional cuisine". Thus, it loads both on the construct we called *French lifestyle* and onto *Food*.
-- `Im15` assesses the "Professional selection of brands". Thus, it loads on both *Product assortment* and *Professionalism*.
-- `Im19` assesses whether Galeries Lafayette are a "Professional organisation". This is under the *Professionalism* construct as well, but its loading is overall weaker.
-
+-   `Im8` assesses the "Expertise in French traditional cuisine". Thus,
+    it loads both on the construct we called *French lifestyle* and onto
+    *Food*.
+-   `Im15` assesses the "Professional selection of brands". Thus, it
+    loads on both *Product assortment* and *Professionalism*.
+-   `Im19` assesses whether Galeries Lafayette are a "Professional
+    organisation". This is under the *Professionalism* construct as
+    well, but its loading is overall weaker.
 
 ## Models without Image 9 (8 and 9 factors)
 
@@ -326,34 +345,50 @@ The performance of `Im11` in terms of loadings on factors does not
 improve, which conceptually makes sense because the 2 variables describe
 something quite different.
 
-Again, the model with 9 factors does not have any strong loading on its last factor. Therefore, we decide to continue the analysis for now by comparing only with our models which have 8 factors and which exclude at least `Im9`, i.e. `FA8_9` and `FA8_119`. All other models will be dropped from further analysis.
+Again, the model with 9 factors does not have any strong loading on its
+last factor. Therefore, we decide to continue the analysis for now by
+comparing only with our models which have 8 factors and which exclude at
+least `Im9`, i.e. `FA8_9` and `FA8_119`. All other models will be
+dropped from further analysis.
 
 ```{r}
 rm(FA8, FA9, FA9_9, FA9_119)
 ```
 
-We display the loadings of our two remaining models numerically, with a cutoff at 0.3.
+We display the loadings of our two remaining models numerically, with a
+cutoff at 0.3.
 
 ```{r}
 print(FA8_9$loadings, cutoff = 0.3, sort = TRUE)
 print(FA8_119$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-The two models are quite similar, but we can see that the loading associated to variable `Im11` inside `FA8_9` is under 0.6. Moreover, the portion of variance explained by the model is 0.771 for `FA8_9` and 0.787 for `FA8_119`. Thus, `FA8_119` seems to be a better option. 
+The two models are quite similar, but we can see that the loading
+associated to variable `Im11` inside `FA8_9` is under 0.6. Moreover, the
+portion of variance explained by the model is 0.771 for `FA8_9` and
+0.787 for `FA8_119`. Thus, `FA8_119` seems to be a better option.
 
-The three variables mentioned before are still loading onto multiple factors:
-- `Im8` is loading onto Food and French Lifestyle constructs like before;
-- `Im15` is loading onto Product Assortment and Professionalism like before;
-- `Im19` is loading onto Store Arrangement and Professionalism;
-- `Im7` which is part of the French Lifestyle construct, is loading onto the Store Arrangement construct as well, but the difference in magnitude of the loadings is important, unlike with the other three variables above. It maintains a strong attachment to its designated factor.
+The three variables mentioned before are still loading onto multiple
+factors: - `Im8` is loading onto Food and French Lifestyle constructs
+like before; - `Im15` is loading onto Product Assortment and
+Professionalism like before; - `Im19` is loading onto Store Arrangement
+and Professionalism; - `Im7` which is part of the French Lifestyle
+construct, is loading onto the Store Arrangement construct as well, but
+the difference in magnitude of the loadings is important, unlike with
+the other three variables above. It maintains a strong attachment to its
+designated factor.
 
 We look at the description of question `Im7`.
 
 ```{r}
 descriptions[7,]
 ```
-There does not seem to be a particular logical connection between French Savoir-vivre and the the Store Arrangement construct. However, as we have mentioned this is not a huge concern, as `Im7` is strongly anchored to the French Lifestyle construct. Regarding `Im8`, `Im15` and `Im19`, we will have to test models including or excluding them.
 
+There does not seem to be a particular logical connection between French
+Savoir-vivre and the the Store Arrangement construct. However, as we
+have mentioned this is not a huge concern, as `Im7` is strongly anchored
+to the French Lifestyle construct. Regarding `Im8`, `Im15` and `Im19`,
+we will have to test models including or excluding them.
 
 ## Further investigation on `FA8_119`
 
@@ -373,36 +408,48 @@ ggplot(mapping = aes(x = 1:length(FA8_119$values),
        color = "Eigenvalue >= 1")
 ```
 
-This plot serves the purpose of
-determining the number of factors to retain in the factor axis analysis.
-Factors' eigenvalues are ordered in a descending order. This method is
-quite subjective but it might provide provide further insight. The elbow rule suggests to cut off the number of factors at 8, which is coherent with what we have seen. However, the Kaiser-Guttman criterion, which indicates to select only factors with eigenvalues greater than 1, would suggest here a model with only five factors. Give the natural groupings we have considered above, this does not seem like an appropriate description of our data's structure. However, this model will still be explored in the following section.
-
+This plot serves the purpose of determining the number of factors to
+retain in the factor axis analysis. Factors' eigenvalues are ordered in
+a descending order. This method is quite subjective but it might provide
+provide further insight. The elbow rule suggests to cut off the number
+of factors at 8, which is coherent with what we have seen. However, the
+Kaiser-Guttman criterion, which indicates to select only factors with
+eigenvalues greater than 1, would suggest here a model with only five
+factors. Give the natural groupings we have considered above, this does
+not seem like an appropriate description of our data's structure.
+However, this model will still be explored in the following section.
 
 ## Model with 5 factors
 
-We run a model with only 5 factors and without `Im9` and `Im11`, as the scree plot considered above which suggests the 5 factors model did not include those two items.
+We run a model with only 5 factors and without `Im9` and `Im11`, as the
+scree plot considered above which suggests the 5 factors model did not
+include those two items.
 
 ```{r}
 FA5_119 <- fa(df2[, -c(9,11)], nfactors = 5, rotate = "varimax", fm = "pa")
 print(FA5_119$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-The cumulative explained variance of the model decreases. Moreover, factors such as French Lifestyle and Food are merged together, while questions `Im16` and `Im19` have very split loadings between two or three factors. Obviously, this model is not appropriate for our data.
+The cumulative explained variance of the model decreases. Moreover,
+factors such as French Lifestyle and Food are merged together, while
+questions `Im16` and `Im19` have very split loadings between two or
+three factors. Obviously, this model is not appropriate for our data.
 
 ```{r}
 rm(FA8_9, FA5_119)
 ```
 
-
-Thus, we drop this possible type of model to concentrate on the analysis of variables `Im8`, `Im15` and `Im19`.
+Thus, we drop this possible type of model to concentrate on the analysis
+of variables `Im8`, `Im15` and `Im19`.
 
 ## Models including and excluding variables `Im8`, `Im15` and `Im19`.
 
-We remind the reader that these three variables in the `FA8_119` model had split loadings onto 
-were loadings on factors that make logical sense, but the values of loadings were quite close to the 0.3 cut-off.
+We remind the reader that these three variables in the `FA8_119` model
+had split loadings onto were loadings on factors that make logical
+sense, but the values of loadings were quite close to the 0.3 cut-off.
 
-We explore all combinations of models with 8 factors and with or without the three items of interest.
+We explore all combinations of models with 8 factors and with or without
+the three items of interest.
 
 ```{r}
 FA8_119_81519 <- fa(df2[, -c(9,11,8,15,19)], nfactors = 8, rotate = "varimax", fm = "pa")
@@ -414,11 +461,10 @@ FA8_119_15    <- fa(df2[, -c(9,11,15)],      nfactors = 8, rotate = "varimax", f
 FA8_119_19    <- fa(df2[, -c(9,11,19)],      nfactors = 8, rotate = "varimax", fm = "pa")
 ```
 
-
-
 ### Models excluding one variable
 
-We plot the loadings and print them numerically for `FA8_119_8`, `FA8_119_15` and `FA8_119_19`.
+We plot the loadings and print them numerically for `FA8_119_8`,
+`FA8_119_15` and `FA8_119_19`.
 
 ```{r}
 par(mfrow = c(3,1))
@@ -437,18 +483,23 @@ corrplot(t(FA8_119_19$loadings),
 par(mfrow = c(1,1))
 ```
 
-
 ```{r}
 print(FA8_119_8$loadings, cutoff = 0.3, sort = TRUE)
 print(FA8_119_15$loadings, cutoff = 0.3, sort = TRUE)
 print(FA8_119_19$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-All three models have a total explained variance which has improved when compared to `FA8_119`. The biggest improvement is when removing `Im15`. However, we see that in all three models, the two remaining variables of interest are still loading between various factors, with no remarkable attachment to a particular one. Thus, we probably will get more satisfying results when looking at models excluding two variables.
+All three models have a total explained variance which has improved when
+compared to `FA8_119`. The biggest improvement is when removing `Im15`.
+However, we see that in all three models, the two remaining variables of
+interest are still loading between various factors, with no remarkable
+attachment to a particular one. Thus, we probably will get more
+satisfying results when looking at models excluding two variables.
 
 ### Models excluding two variables
 
-We plot the loadings and print them numerically for `FA8_119_815`, `FA8_119_819` and `FA8_119_1519`.
+We plot the loadings and print them numerically for `FA8_119_815`,
+`FA8_119_819` and `FA8_119_1519`.
 
 ```{r}
 par(mfrow = c(3,1))
@@ -467,17 +518,20 @@ corrplot(t(FA8_119_1519$loadings),
 par(mfrow = c(1,1))
 ```
 
-
 ```{r}
 print(FA8_119_815$loadings, cutoff = 0.3, sort = TRUE)
 print(FA8_119_819$loadings, cutoff = 0.3, sort = TRUE)
 print(FA8_119_1519$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-Here, model `FA8_119_815` outperforms the other two. Its explained variance is the highest we have seen yet, at 0.800, and the loadings are clear for all variables. This is the first instance of variable `Im19` having a loading which is above the usual 0.6 cutoff. This is a good sign. The other two models still exhibits split loadings for the three problematic variables. 
+Here, model `FA8_119_815` outperforms the other two. Its explained
+variance is the highest we have seen yet, at 0.800, and the loadings are
+clear for all variables. This is the first instance of variable `Im19`
+having a loading which is above the usual 0.6 cutoff. This is a good
+sign. The other two models still exhibits split loadings for the three
+problematic variables.
 
 ### Model excluding the three variables
-
 
 ```{r}
 corrplot(t(FA8_119_81519$loadings),
@@ -490,12 +544,18 @@ corrplot(t(FA8_119_81519$loadings),
 print(FA8_119_81519$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-When excluding all three variables, we see that `Im16` becomes loaded by itself onto one factor, and its loading is split between three factors. This is due to the fact that `Im19` is essential to form a factor together with `Im16`. The total explained variance is very slightly higher than before, but a difference of 0.001 is not a good trade-off to accepting split loadings in `Im16`.
-
+When excluding all three variables, we see that `Im16` becomes loaded by
+itself onto one factor, and its loading is split between three factors.
+This is due to the fact that `Im19` is essential to form a factor
+together with `Im16`. The total explained variance is very slightly
+higher than before, but a difference of 0.001 is not a good trade-off to
+accepting split loadings in `Im16`.
 
 ## Final model of choice
 
-As we have shown, the best model we have found is `FA8_119_815`. It has an explained variance of 80% and all factor loadings are clear and above 0.6. We remove all other models.
+As we have shown, the best model we have found is `FA8_119_815`. It has
+an explained variance of 80% and all factor loadings are clear and above
+0.6. We remove all other models.
 
 ```{r}
 rm(FA8_119, FA8_119_8, FA8_119_15, FA8_119_19, FA8_119_819, FA8_119_1519, FA8_119_81519)
@@ -507,11 +567,9 @@ We display the loadings of our final model again for clarity.
 print(FA8_119_815$loadings, cutoff = 0.3, sort = TRUE)
 ```
 
-
 # FIRST QUESTION: What are the dimensions by which Galeries Lafayette is perceived? Please explain your findings and rationale for your final result.
 
 Our final choice if `FA8_119_815` The 8 factors identified are:
-
 
 **Factor 1:** Organization and Arrangement
 
@@ -561,7 +619,8 @@ descriptions[c(12,13)]
 descriptions[c(16,19)]
 ```
 
-We can rename our eight factors inside the table which describes the total variance and the total explained variance.
+We can rename our eight factors inside the table which describes the
+total variance and the total explained variance.
 
 ```{r}
 colnames(FA8_119_815$Vaccounted) <- c('Organization', 'Experience', 'Assortment', 'Food',
@@ -569,7 +628,9 @@ colnames(FA8_119_815$Vaccounted) <- c('Organization', 'Experience', 'Assortment'
 FA8_119_815$Vaccounted
 ```
 
-This allows us to quickly identify which are the most important factors. To facilitate the visualisation, we plot a Pareto chart for the total explained variance (TVE) below.
+This allows us to quickly identify which are the most important factors.
+To facilitate the visualisation, we plot a Pareto chart for the total
+explained variance (TVE) below.
 
 ```{r}
 ggplot(mapping = aes(x = reorder(colnames(FA8_119_815$Vaccounted), -FA8_119_815$Vaccounted[4,]),
@@ -583,7 +644,14 @@ ggplot(mapping = aes(x = reorder(colnames(FA8_119_815$Vaccounted), -FA8_119_815$
        title = "Pareto chart of TVE for FA8_119_815")
 ```
 
-Organisation and Experience are the two most important factors in our model, they are the two constructs that people identify the most with Galeries Lafayette. After Experience, there is a small gap, and afterwards factors decrease very slowly in terms of their TVE portion, except for Professionalism at the end which is a bit lower. This means that the way Galeries Lafayette are organized in terms of displays and the atmosphere giving customers a unique experience are the two most important factors for the Galeries.
+Organisation and Experience are the two most important factors in our
+model, they are the two constructs that people identify the most with
+Galeries Lafayette. After Experience, there is a small gap, and
+afterwards factors decrease very slowly in terms of their TVE portion,
+except for Professionalism at the end which is a bit lower. This means
+that the way Galeries Lafayette are organized in terms of displays and
+the atmosphere giving customers a unique experience are the two most
+important factors for the Galeries.
 
 # Confirmatory Analysis
 
@@ -602,12 +670,16 @@ are described by the observable variables (Images).
 
 We state the model:
 
-In `lavaan` syntax, `=~` means "is measured by". What we are designing here is a measurement
-model, because the latent variables predict the observed exogenous
-variables.By default, `lavaan` does allows the factors ot correlate together. In order to
-avoid that, it is possible to use the syntax `factor1~~0*factor2` to set a correlation between two factors to zero. However, this choice depends on the data we have, it is an option to be considered if our models have poor fits.
+In `lavaan` syntax, `=~` means "is measured by". What we are designing
+here is a measurement model, because the latent variables predict the
+observed exogenous variables.By default, `lavaan` does allows the
+factors ot correlate together. In order to avoid that, it is possible to
+use the syntax `factor1~~0*factor2` to set a correlation between two
+factors to zero. However, this choice depends on the data we have, it is
+an option to be considered if our models have poor fits.
 
-We begin by creating a model which includes only the eight factors we created from the Images variables.
+We begin by creating a model which includes only the eight factors we
+created from the Images variables.
 
 ```{r}
 construct <- "
@@ -625,17 +697,32 @@ fit <- lavaan::cfa(construct, data = df1, missing = "ML")
 summary(fit, fit.measures = TRUE, estimates = FALSE)
 ```
 
-
 We analyse the output.
 
-The first measure of model fitting is the result of the $\chi^2$ **test** performed by the model. The model we created reproduces the correlation matrix between the variables of our dataset, i.e. the Image variables in our case. We call $\Sigma$ the correlation matrix crafted by the model and $S$ the real correlation matrix of our dataset. Thus, the $\chi^2$ test makes the following null hypothesis:
-$$H_0 : \Sigma = S$$
-If the $\chi^2$ test's null hypothesis is rejected, it indicates that the model might not fit well the structure underlying our data, as the reproduced correlation matrix is too different from the original one.
-Here, as the $p$-value of the $\chi^2$ test is 0.00, we should reject the null hypothesis, which indicates that the model does not fit the structure of our data well.
+The first measure of model fitting is the result of the $\chi^2$
+**test** performed by the model. The model we created reproduces the
+correlation matrix between the variables of our dataset, i.e. the Image
+variables in our case. We call $\Sigma$ the correlation matrix crafted
+by the model and $S$ the real correlation matrix of our dataset. Thus,
+the $\chi^2$ test makes the following null hypothesis:
+$$H_0 : \Sigma = S$$ If the $\chi^2$ test's null hypothesis is rejected,
+it indicates that the model might not fit well the structure underlying
+our data, as the reproduced correlation matrix is too different from the
+original one. Here, as the $p$-value of the $\chi^2$ test is 0.00, we
+should reject the null hypothesis, which indicates that the model does
+not fit the structure of our data well.
 
-However, there is one important caveat. The $\chi^2$ test is extremely sensitive to sample size. When sample size is small, it tends to be too lax, by failing to reject models which are inadapted. On the contrary, when sample size is large, the $\chi^2$ test becomes too strict and can reject models which are appropriate. As we have a large sample size, the $\chi^2$ test might be too harsh on our model.
+However, there is one important caveat. The $\chi^2$ test is extremely
+sensitive to sample size. When sample size is small, it tends to be too
+lax, by failing to reject models which are inadapted. On the contrary,
+when sample size is large, the $\chi^2$ test becomes too strict and can
+reject models which are appropriate. As we have a large sample size, the
+$\chi^2$ test might be too harsh on our model.
 
-Instead, we can observe another measure related to this statistical test. If the ratio between the value of the $\chi^2$ test and the degrees of freedom is below 5, this indicates that the model could be a good fit.
+Instead, we can observe another measure related to this statistical
+test. If the ratio between the value of the $\chi^2$ test and the
+degrees of freedom is below 5, this indicates that the model could be a
+good fit.
 
 We compute the ratio:
 
@@ -648,36 +735,50 @@ fit@Fit@test$standard$df
 fit@Fit@test$standard$stat / fit@Fit@test$standard$df
 ```
 
-As the ratio is smaller than 5, this is a good sign towards the fit of our model.
+As the ratio is smaller than 5, this is a good sign towards the fit of
+our model.
 
-The second measure of fit is the **RMSEA** (Root Mean Square Error of Approximation). It is defined as
+The second measure of fit is the **RMSEA** (Root Mean Square Error of
+Approximation). It is defined as
 
-$$RMSEA = \sqrt{\dfrac{\chi - df}{df(N-1)}}$$
-where $\chi$ is the value of the $\chi^2$ test, $df$ is the number of degrees of freedom and $N$ is the sample size of the data, which is 553 in our case.
+$$RMSEA = \sqrt{\dfrac{\chi - df}{df(N-1)}}$$ where $\chi$ is the value
+of the $\chi^2$ test, $df$ is the number of degrees of freedom and $N$
+is the sample size of the data, which is 553 in our case.
 
-As we can see in the summary, we have an RMSEA of 0.04. If the RMSEA is below 0.05, the model is considered to be a good fit. If it is between 0.05 and 0.08, it is acceptable. The test of good fit tests the following statistical hypothesis:
+As we can see in the summary, we have an RMSEA of 0.04. If the RMSEA is
+below 0.05, the model is considered to be a good fit. If it is between
+0.05 and 0.08, it is acceptable. The test of good fit tests the
+following statistical hypothesis:
 
-$$H_0: RMSEA \leq 0.05$$
-In our case, the $p$-value of the test of good fit is 0.971, which means that the null hypothesis cannot be rejected. Thus, the RMSEA indicates that our model is a good fit.
+$$H_0: RMSEA \leq 0.05$$ In our case, the $p$-value of the test of good
+fit is 0.971, which means that the null hypothesis cannot be rejected.
+Thus, the RMSEA indicates that our model is a good fit.
 
-The third measure of fit is the **CFI** (Comparative Fit Index). The CFI compares the model to a baseline model, which is usually a model with no correlation between variables, and quantifies the improvement in fitting by using the crafted model instead of the baseline. Having a CFI value above 0.95 indicates a good fit. As our model has a CFI of 0.98, this is a good sign.
+The third measure of fit is the **CFI** (Comparative Fit Index). The CFI
+compares the model to a baseline model, which is usually a model with no
+correlation between variables, and quantifies the improvement in fitting
+by using the crafted model instead of the baseline. Having a CFI value
+above 0.95 indicates a good fit. As our model has a CFI of 0.98, this is
+a good sign.
 
-Now that we have examined the three main fit measures, we take a look at the estimated coefficients of the model.
+Now that we have examined the three main fit measures, we take a look at
+the estimated coefficients of the model.
 
 ```{r}
 summary(fit, standardized = TRUE)
 ```
 
-
 We see that the first items in the factors estimates (under latent
-variables) are fixed to 1, that is because `lavaan` uses the Marker Method
-for identification, by default, which is also why standard error z-stat
-and P value are not estimated for the first loading. By fixing that
-loading to 1 our model is at least identified (in our case,  $df=107$ so it
-is over-identified). Moreover, fixing the first loading to 1
-scales the loadings (and the variances) to the scale of the item being
-fixed. It is not necessarily crucial in our case, because all questions are over
-the same 7 item scale, but standardizing ensures more readability. In that sense, if we consider the Assortment factor, a 1 unit increase in `Im1` will increase `Im2` by 0.88.
+variables) are fixed to 1, that is because `lavaan` uses the Marker
+Method for identification, by default, which is also why standard error
+z-stat and P value are not estimated for the first loading. By fixing
+that loading to 1 our model is at least identified (in our case,
+$df=107$ so it is over-identified). Moreover, fixing the first loading
+to 1 scales the loadings (and the variances) to the scale of the item
+being fixed. It is not necessarily crucial in our case, because all
+questions are over the same 7 item scale, but standardizing ensures more
+readability. In that sense, if we consider the Assortment factor, a 1
+unit increase in `Im1` will increase `Im2` by 0.88.
 
 We also see that the factors variances are scaled to 1, and that the
 residuals of the Images ( because they have the dot . in front of the
@@ -685,10 +786,9 @@ name) have a variance, because as stated before they are being predicted
 by the latent factors.
 
 The standardized loadings are all above 0.6 (scaled as well and
-therefore comparable),
-meaning that the Images in each factors are good indicators for the
-latent variables. Those values, when squared, represent the item's variance
-that is explained through the construct.
+therefore comparable), meaning that the Images in each factors are good
+indicators for the latent variables. Those values, when squared,
+represent the item's variance that is explained through the construct.
 
 We plot our model:
 
@@ -696,17 +796,22 @@ We plot our model:
 lavaanPlot(name="plot_factors", fit, labels = NULL)
 ```
 
-It is the latent factors that influence the observed items, not the other
-way around.
+It is the latent factors that influence the observed items, not the
+other way around.
 
-The function `modindices` quantifies the improvement of fit in our model if we would allow certain elements to be free instead of fixed.
+The function `modindices` quantifies the improvement of fit in our model
+if we would allow certain elements to be free instead of fixed.
 
 ```{r}
 # minimum.value = 10 allows to only display the quantified improvement which is >= 10
 modindices(fit, minimum.value = 10, sort. = TRUE)
 ```
 
-The values of the modification indices, under column `mi`, aren't very high, which is reassuring. We try adding `Im21 ~~ Im22` to the model to see if that brings improvement. If Images 21 and 22 have a big modification index, it means that they share variance which is unexplained through their construct.
+The values of the modification indices, under column `mi`, aren't very
+high, which is reassuring. We try adding `Im21 ~~ Im22` to the model to
+see if that brings improvement. If Images 21 and 22 have a big
+modification index, it means that they share variance which is
+unexplained through their construct.
 
 ```{r}
 construct2 <- "
@@ -725,10 +830,15 @@ Im21 ~~ Im22
 fit2 <- cfa(construct2, data = df1, missing = "ML")
 summary(fit2, fit.measures = TRUE, standardized = TRUE)
 ```
-The model we obtain is very similar to our previous one, with ony the loadings of the Shopping Experience construct which change. Overall, there is no significative improvement in the measures of fit. Thus, we
+
+The model we obtain is very similar to our previous one, with ony the
+loadings of the Shopping Experience construct which change. Overall,
+there is no significative improvement in the measures of fit. Thus, we
 keep our model `fit` as it is.
 
-We tried to allow other elements of our model to correlate freely, but very little changed in terms of performance metrics, thus we will not show them here in order to remain concise.
+We tried to allow other elements of our model to correlate freely, but
+very little changed in terms of performance metrics, thus we will not
+show them here in order to remain concise.
 
 ## Adding mediators
 
@@ -806,7 +916,6 @@ semPaths(fitm, what = "path", whatLabels = "std", style = "lisrel",fade=TRUE,
 
 The path linking COM and SAT is because we are allowing for the two to
 predict each-other.
-
 
 ### Complete Model
 
@@ -975,7 +1084,6 @@ summary(fit3, fit.measures=TRUE, standardized=TRUE)
 
 All latent variables have std.all above 0.6.
 
-
 ```{r}
 lavaanPlot(name="plot", fit3, labels = NULL)
 ```
@@ -991,7 +1099,6 @@ semPaths(fit3,what = "path", whatLabels = "std", style = "lisrel",exoCov = T,
 
 semPaths(fit3, what="std", fade=F, edge.label.cex=1, sizeMan=7, sizeLat=7, exoCov = F, exoVar = F, intercepts = F, rotation = 2)
 
-semPaths(fit3, what="path", whatLabels="std")
 ```
 
 ```{r}
@@ -1032,11 +1139,20 @@ summary(fit_trial,fit.measures=TRUE, standardized=TRUE)
 
 ```
 
-
+```{r}
+semPaths(fit_trial,what = "path", whatLabels = "std", style = "lisrel",exoCov = T,
+         rotation = 2, layout = "tree", mar = c(1, 2, 1, 2), 
+         nCharNodes = 7,shapeMan = "rectangle", sizeMan = 7, sizeMan2 = 5, 
+         curvePivot=TRUE, edge.label.cex = 1.2, edge.color = "darkblue")
+```
 
 #### Reliability of Exogenous and Endogenous Constructs
 
-Construct reliability can be measured either with Cronbach's alpha or with Composite Reliability (CR). The former is less reliable of a measure. Regardless, if either one are above 0.95 it means that the observables forming the factor are measuring the same thing, making them redundant.
+Construct reliability can be measured either with Cronbach's alpha or
+with Composite Reliability (CR). The former is less reliable of a
+measure. Regardless, if either one are above 0.95 it means that the
+observables forming the factor are measuring the same thing, making them
+redundant.
 
 **Cronbach's alpha**
 
@@ -1057,8 +1173,8 @@ cronbach(subset(df1, select = c(C_REP1:C_REP3)))$alpha
 ```
 
 The alphas of the factors are high, all over the 0.70 benchmark. The
-items are sufficiently reliable. None is above 0.95, the questions describe the latent factor well without being redundant.
-
+items are sufficiently reliable. None is above 0.95, the questions
+describe the latent factor well without being redundant.
 
 **Composite Reliability**
 
@@ -1082,6 +1198,7 @@ CR
 The CR values are high enough, without signaling redundancy.
 
 **Indicator Reliability**
+
 ```{r}
 #Individual item Reliability
 IIR=std.loadings2/(colSums(std.theta)+std.loadings2)
@@ -1089,11 +1206,14 @@ IIR
 
 ```
 
-We observe that the reliability for C_CR2 is low. That should be take out of the model.
+We observe that the reliability for C_CR2 is low. That should be take
+out of the model.
 
 #### Average Variance Extracted
 
-It is the measure of the amount of variance that is captured by a construct in relation to the amount of variance due to measurement error.
+It is the measure of the amount of variance that is captured by a
+construct in relation to the amount of variance due to measurement
+error.
 
 ```{r}
 std.loadings<- inspect(fit3, what="std")$lambda
@@ -1102,21 +1222,54 @@ AVE=colSums(std.loadings)/(colSums(sum.std.theta)+colSums(std.loadings))
 AVE
 ```
 
-
 ```{r}
 std_fit1=inspect(fit3, "std")
 std_fit1$psi^2
 ```
 
-
 #### Discriminant validity
 
- Discriminant validity measures the distinctiveness of a
-construct. Discriminant validity is demonstrated when the shared variance within a construct (AVE) exceeds the shared variance between the
-constructs. 
-
+Discriminant validity measures the distinctiveness of a construct.
+Discriminant validity is demonstrated when the shared variance within a
+construct (AVE) exceeds the shared variance between the constructs.
 
 #### 2.Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
+
+To Answer the first portion of this question we need to look into the
+output for the regression paths (structural models) connecting the 8
+exogenous factors we designed and the mediators factors. The outputs can
+be interpreted as any regular regression model, what we have to look out
+for is that not all our hypotheses might be confirmed.
+
+\*\* What drives affective commitment?\*
+
+![](images/image-988289484.png)
+
+Among the client perception factors, the one with the strongest effect
+on Affective Commitment is Shopping Experience, in a positive direction.
+For the client having a relaxing and intimate shopping experience builds
+affective commitment, this is very intuitive having a nice time at the
+Galerie will influence attachment. A nice memory of the time spent there
+adds positive connotations to the brand. Moreover, the Shopping
+Experience seems to be the only strongly significant estimate within the
+model.
+
+Other significant factors are French Lifestyle, Assortment and Luxury.
+For the first factor, we can deduce that people shopping at le galerie
+in Berlin are maybe looking for a particular experience, one that is
+centred around a French way of living. Therefore, finding this element
+satisfied results in a grown affective attachment to the brand.
+Assortment drives attachment, if the client knows they will find what
+they are looking for or they conclude a purchase that was highly
+satisfying for them this influences attachment positively. What seems to
+be counter-intuitive is the negative coefficient attached to the Luxury
+factor, but also we could maybe infer that a certain kind of ambience in
+the store might intimidate the customer.
+
+Factors that do not seem to drive Affective Attachment are:
+Organization, Coolness, Food and Professionalism.
+
+What drives Satisfaction?
 
 #### 3. What is driving the two distinct outcomes (repurchase and co-creation intention): Please rank the image dimensions with respect to the total effect on each outcome? Interpret your results
 
@@ -1125,9 +1278,8 @@ References:
 [Confirmatory Factor Analysis (CFA) in R with lavaan
 (ucla.edu)](https://stats.oarc.ucla.edu/r/seminars/rcfa/#s3b)
 
-https://www.sciencedirect.com/science/article/pii/S1071581910001278
+<https://www.sciencedirect.com/science/article/pii/S1071581910001278>
 
-https://en.wikipedia.org/wiki/Congeneric_reliability
+<https://en.wikipedia.org/wiki/Congeneric_reliability>
 
-https://en.wikipedia.org/wiki/Average_variance_extracted
-
+<https://en.wikipedia.org/wiki/Average_variance_extracted>
