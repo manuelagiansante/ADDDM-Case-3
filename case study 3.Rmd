@@ -1247,7 +1247,7 @@ Discriminant validity measures the distinctiveness of a construct.
 Discriminant validity is demonstrated when the shared variance within a
 construct (AVE) exceeds the shared variance between the constructs.
 
-#### 2.Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
+# SECOND QUESTION. Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
 
 To Answer the first portion of this question we need to look into the
 output for the regression paths (structural models) connecting the 8
@@ -1341,7 +1341,7 @@ capito ma 30% of an intention bah ha poco senso per me. fammi sap :)\`
 
 ![](images/image-2080386527.png)
 
-#### 3. What is driving the two distinct outcomes (repurchase and co-creation intention): Please rank the image dimensions with respect to the total effect on each outcome? Interpret your results
+# THIRD QUESTION. What is driving the two distinct outcomes (repurchase and co-creation intention): Please rank the image dimensions with respect to the total effect on each outcome? Interpret your results
 
 For this we do not have to look into the regression path results only,
 we need to investigate total effects of the factors on the outcomes,
