@@ -1271,7 +1271,7 @@ the store might intimidate the customer.
 Factors that do not seem to drive Affective Attachment are:
 Organization, Coolness, Food and Professionalism.
 
-What drives Satisfaction?
+**What drives Satisfaction?**
 
 ![](images/image-118494340.png)
 
@@ -1301,7 +1301,7 @@ as well, Professionalism is not relevant when we observe customer
 affective attachment, neither is organization. Both of these constructs
 are actually important when considering satisfaction.
 
-Are COM and SAT mediating ? Yes, in both regression paths the estimates
+**Are COM and SAT mediating ?** Yes, in both regression paths the estimates
 corresponding to Affective attachment and Satisfaction are significant.
 Repurchase intention is positively driven by both mediators, whilst
 CO-creation intention is negatively driven by satisfaction, which it
@@ -1309,7 +1309,7 @@ seems logical because the more satisfied the customer is the least
 motivated to share ideas they are.
 
 Clients who have had positive experiences at the Galerie and have
-developed an affective attachement to the store are more likely to
+developed an affective attachment to the store are more likely to
 re-purchase from there.
 
 `(Co-creation is a form of collaborative innovation: ideas are shared and improved together, rather than kept to oneself.????)se vuoi aggiungere numri let me know e mi adopero però tipo non lo so quanto sia rilevante. nel senso gli possiamo far vedere che abbiamo capito ma 30% of an intention bah ha poco senso per me. fammi sap :)`
