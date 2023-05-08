@@ -1425,24 +1425,36 @@ y<-estimates[c(242:249),c(1,5,8)]
 y$est2<-(y$est)^2
 ```
 
+For Co-Creation as well what manages to be significant in terms of total
+effects is the shopping experience. Here the survey did not mention any
+online shopping platform, so the in-presence experience is very
+important. Moreover, we also have to consider that a lot of the direct
+effects from factors to outcome has negative estimates.
+
 In descending order the client perception factors in terms of total
 effect:
 
-1.  Shopping Experience
+1.  Shopping Experience: it has a positive effect on the client
+    intention to participate in new surveys and possible workshops.
 
-2.  Professionalism
+2.  Professionalism: results negative
 
-3.  Food
+3.  Food: results negative
 
-4.  French Lifestyle
+4.  French Lifestyle: results negative
 
 5.  Coolness
 
 6.  Luxury
 
-7.  Organisation
+7.  Organisation: results negative
 
-8.  Assortment
+8.  Assortment: results negative
+
+Many of the estimates result negative, but we also have to consider that
+re-purchase intentions and participation in surveys and co-creative
+activities with the Galeries are not the same dynamic, and the study
+demonstrates that they are driven by different elements.
 
 References:
 
