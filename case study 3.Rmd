@@ -593,84 +593,101 @@ Cocreation Intention.
 The "mediators" will be "customer Satisfaction" and "Affective
 Commitment".
 
-### Initial factors
+## Fitting only initial factors
 
-CFA is used to test whether the design construct ( in our case
+CFA is used to test whether the design construct (in our case
 `FA8_119_815`) is actually appropriate in modelling the factors. In the
 exploratory part we first developed a hypothesis of what latent factors
 are described by the observable variables (Images).
 
 We state the model:
 
-`=~` means "is measured by", what we are designing here is a measurement
+In `lavaan` syntax, `=~` means "is measured by". What we are designing here is a measurement
 model, because the latent variables predict the observed exogenous
-variables. What `lavaan` does by default is correlating the factors, to
-avoid that we could `factor1~~0*factor2` and so on for all 8 factors.
-But this choice depends on the sample data we have, if we were to find a
-bad fit for this model then this is something we might want to consider
-looking into.
+variables.By default, `lavaan` does allows the factors ot correlate together. In order to
+avoid that, it is possible to use the syntax `factor1~~0*factor2` to set a correlation between two factors to zero. However, this choice depends on the data we have, it is an option to be considered if our models have poor fits.
+
+We begin by creating a model which includes only the eight factors we created from the Images variables.
 
 ```{r}
 construct <- "
-Organization=~Im3+Im4+Im5
-Food=~Im10+Im14
-Shop_experience=~Im20+Im21+Im22
-Coolness=~Im17+Im18
-Assortment=~Im1+Im2
-French_lifestyle=~Im6+Im7
-Luxury=~Im12+Im13
-Professinalism=~Im16+Im19 
+Organization     =~ Im3 + Im4 + Im5
+Food             =~ Im10 + Im14
+Shop_experience  =~ Im20 + Im21 + Im22
+Coolness         =~ Im17 + Im18
+Assortment       =~ Im1 + Im2
+French_lifestyle =~ Im6 + Im7
+Luxury           =~ Im12 + Im13
+Professionalism  =~ Im16 + Im19 
 "
 
 fit <- lavaan::cfa(construct, data = df1, missing = "ML")
-summary(fit, fit.measures = TRUE, standardized = TRUE)
+summary(fit, fit.measures = TRUE, estimates = FALSE)
 ```
-
 
 
 We analyse the output.
 
--   Chi-square/df= 1.90 which is good is should be below 3 or below 5
-    for a 1000 observations sample (we have 533), this indicates a good
-    fit. The p-value for the Chi-square statistic is 0.00, we reject the
-    null hypothesis (exact fit$\Sigma(\theta)=\Sigma$) which means that
-    our empirical sample covariance matrix S is any positive definite
-    matrix. This depends on the sample size, with a larger sample size
-    we are more likely to reject the null hypothesis of the Chi-square
-    test, which is also why we proceed with observing other measures of
-    fit.
+The first measure of model fitting is the result of the $\chi^2$ **test** performed by the model. The model we created reproduces the correlation matrix between the variables of our dataset, i.e. the Image variables in our case. We call $\Sigma$ the correlation matrix crafted by the model and $S$ the real correlation matrix of our dataset. Thus, the $\chi^2$ test makes the following null hypothesis:
+$$H_0 : \Sigma = S$$
+If the $\chi^2$ test's null hypothesis is rejected, it indicates that the model might not fit well the structure underlying our data, as the reproduced correlation matrix is too different from the original one.
+Here, as the $p$-value of the $\chi^2$ test is 0.00, we should reject the null hypothesis, which indicates that the model does not fit the structure of our data well.
 
-    **Incremental**
+However, there is one important caveat. The $\chi^2$ test is extremely sensitive to sample size. When sample size is small, it tends to be too lax, by failing to reject models which are inadapted. On the contrary, when sample size is large, the $\chi^2$ test becomes too strict and can reject models which are appropriate. As we have a large sample size, the $\chi^2$ test might be too harsh on our model.
 
--   CFI\>0.95 which is good, we accept the model. Our model is better
-    than the baseline model with uncorrelated variables.
+Instead, we can observe another measure related to this statistical test. If the ratio between the value of the $\chi^2$ test and the degrees of freedom is below 5, this indicates that the model could be a good fit.
 
--   TFI\>0.95 as well, which is good.
+We compute the ratio:
 
-    **Absolute**
+```{r}
+# value of test
+fit@Fit@test$standard$stat
+# degrees of freedom
+fit@Fit@test$standard$df
+# ratio
+fit@Fit@test$standard$stat / fit@Fit@test$standard$df
+```
 
--   RMSEA is below 0.6.
+As the ratio is smaller than 5, this is a good sign towards the fit of our model.
+
+The second measure of fit is the **RMSEA** (Root Mean Square Error of Approximation). It is defined as
+
+$$RMSEA = \sqrt{\dfrac{\chi - df}{df(N-1)}}$$
+where $\chi$ is the value of the $\chi^2$ test, $df$ is the number of degrees of freedom and $N$ is the sample size of the data, which is 553 in our case.
+
+As we can see in the summary, we have an RMSEA of 0.04. If the RMSEA is below 0.05, the model is considered to be a good fit. If it is between 0.05 and 0.08, it is acceptable. The test of good fit tests the following statistical hypothesis:
+
+$$H_0: RMSEA \leq 0.05$$
+In our case, the $p$-value of the test of good fit is 0.971, which means that the null hypothesis cannot be rejected. Thus, the RMSEA indicates that our model is a good fit.
+
+The third measure of fit is the **CFI** (Comparative Fit Index). The CFI compares the model to a baseline model, which is usually a model with no correlation between variables, and quantifies the improvement in fitting by using the crafted model instead of the baseline. Having a CFI value above 0.95 indicates a good fit. As our model has a CFI of 0.98, this is a good sign.
+
+Now that we have examined the three main fit measures, we take a look at the estimated coefficients of the model.
+
+```{r}
+summary(fit, standardized = TRUE)
+```
+
 
 We see that the first items in the factors estimates (under latent
-variables) are fixed to 1, that is because lavaan uses the Marker Method
+variables) are fixed to 1, that is because `lavaan` uses the Marker Method
 for identification, by default, which is also why standard error z-stat
 and P value are not estimated for the first loading. By fixing that
-loading to 1 our model is at least identified (in our case df=107 so it
-is over-identified). Moreover, what this fixing to 1 does is that is
-scales the loadings (and the variances) to the scale of that item being
-fixed, for it is not necessarily crucial because all questions are over
-the same 7 item scale. So if we consider the Assortment factor, a 1 unit
-increase in Im1 will increase Im2 by 0.88.
+loading to 1 our model is at least identified (in our case,  $df=107$ so it
+is over-identified). Moreover, fixing the first loading to 1
+scales the loadings (and the variances) to the scale of the item being
+fixed. It is not necessarily crucial in our case, because all questions are over
+the same 7 item scale, but standardizing ensures more readability. In that sense, if we consider the Assortment factor, a 1 unit increase in `Im1` will increase `Im2` by 0.88.
 
 We also see that the factors variances are scaled to 1, and that the
 residuals of the Images ( because they have the dot . in front of the
 name) have a variance, because as stated before they are being predicted
 by the latent factors.
 
-The standardised loadings are all above 0.6 ( scaled as well and
-therefore comparable, with -1 as minimum values and 1 as maximum value),
+The standardized loadings are all above 0.6 (scaled as well and
+therefore comparable),
 meaning that the Images in each factors are good indicators for the
-latent variables. Those values if squared represent the item's variance
+latent variables. Those values, when squared, represent the item's variance
 that is explained through the construct.
 
 We plot our model:
@@ -679,44 +696,41 @@ We plot our model:
 lavaanPlot(name="plot_factors", fit, labels = NULL)
 ```
 
-It is the latent factors that predict the observed items, not the other
+It is the latent factors that influence the observed items, not the other
 way around.
 
-We want to try and understand why the Chi-Square test was significant.
-Overall, the model we design through EFA is good.
+The function `modindices` quantifies the improvement of fit in our model if we would allow certain elements to be free instead of fixed.
 
 ```{r}
+# minimum.value = 10 allows to only display the quantified improvement which is >= 10
 modindices(fit, minimum.value = 10, sort. = TRUE)
 ```
 
-The `mi` values are not super high which is comforting, we try to add
-Im21\~\~Im22 to the model and see if that brings improvement. What the
-output tells us is that image 21 and image 22 share variance that is not
-explained through the construct.
+The values of the modification indices, under column `mi`, aren't very high, which is reassuring. We try adding `Im21 ~~ Im22` to the model to see if that brings improvement. If Images 21 and 22 have a big modification index, it means that they share variance which is unexplained through their construct.
 
 ```{r}
 construct2 <- "
-Assortment=~Im1+Im2
-French_lifestyle=~Im6+Im7
-Shop_experience=~Im20+Im21+Im22
-Organization=~Im3+Im4+Im5
-Luxury=~Im12+Im13
-Coolness=~Im17+Im18
-Food=~Im10+Im14
-Professinalism=~Im16+Im19 
-Im21~~Im22
+Organization     =~ Im3 + Im4 + Im5
+Food             =~ Im10 + Im14
+Shop_experience  =~ Im20 + Im21 + Im22
+Coolness         =~ Im17 + Im18
+Assortment       =~ Im1 + Im2
+French_lifestyle =~ Im6 + Im7
+Luxury           =~ Im12 + Im13
+Professionalism  =~ Im16 + Im19 
+
+Im21 ~~ Im22
 "
 
-fit2<-cfa(construct2, data=df1, missing="ML")
-summary(fit2, fit.measures=TRUE, standardized=TRUE)
+fit2 <- cfa(construct2, data = df1, missing = "ML")
+summary(fit2, fit.measures = TRUE, standardized = TRUE)
 ```
+The model we obtain is very similar to our previous one, with ony the loadings of the Shopping Experience construct which change. Overall, there is no significative improvement in the measures of fit. Thus, we
+keep our model `fit` as it is.
 
-We report only the first covariance introduction (others were
-performed), very little have changed in terms of performance metrics. We
-keep the model as it is.
+We tried to allow other elements of our model to correlate freely, but very little changed in terms of performance metrics, thus we will not show them here in order to remain concise.
 
-
-### Mediators
+## Adding mediators
 
 We proceed with a stepwise construction of the model, which is
 structural since we are introducing a relationship between latent
