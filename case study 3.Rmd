@@ -922,6 +922,13 @@ predict each-other.
 Customer Satisfaction coded as SAT Affective Commitment coded as COM
 
 Repurchase Intention coded as C_REP Cocreation Intention C_CR.
+Repurchase intention is the latent construct which dictates the answers to the questions from C_REP1 to C_REP3, all regarding the customer intentions for future purchasing from the Galeries.
+Co-creation intention is the latent factor which influences whether the interview customers are willing to participate in workshops or be interview again for similar surveys.
+
+```{r}
+descriptions[23:29,2]
+```
+
 
 The paths between latent variables ( so the factors, the mediator COM
 and SAT, and the outcomes C_REP and C_CR ) are modelled as regression
