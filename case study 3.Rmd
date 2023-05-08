@@ -783,7 +783,9 @@ unit increase in `Im1` will increase `Im2` by 0.88.
 We also see that the factors variances are scaled to 1, and that the
 residuals of the Images ( because they have the dot . in front of the
 name) have a variance, because as stated before they are being predicted
-by the latent factors.
+by the latent factors. (the . in front of the variable name if it was
+under the Intercept output then it would signal that the variable is
+endogenous)
 
 The standardized loadings are all above 0.6 (scaled as well and
 therefore comparable), meaning that the Images in each factors are good
@@ -921,18 +923,23 @@ predict each-other.
 
 Customer Satisfaction coded as SAT Affective Commitment coded as COM
 
-Repurchase Intention coded as C_REP Cocreation Intention C_CR.
-Repurchase intention is the latent construct which dictates the answers to the questions from C_REP1 to C_REP3, all regarding the customer intentions for future purchasing from the Galeries.
-Co-creation intention is the latent factor which influences whether the interview customers are willing to participate in workshops or be interview again for similar surveys.
+Repurchase Intention coded as C_REP Co-creation Intention C_CR.
+Repurchase intention is the latent construct which dictates the answers
+to the questions from C_REP1 to C_REP3, all regarding the customer
+intentions for future purchasing from the Galeries. Co-creation
+intention is the latent factor which influences whether the interview
+customers are willing to participate in workshops or be interview again
+for similar surveys.
 
 ```{r}
 descriptions[23:29,2]
 ```
 
-
 The paths between latent variables ( so the factors, the mediator COM
 and SAT, and the outcomes C_REP and C_CR ) are modelled as regression
-paths.
+paths. `Lavaan` uses least squares in its estimation of regression paths
+in fact the output if we were to run a `lm()` model would almost the
+same if not for rounding errors.
 
 `allora questo cancellalo, ma ci sono delle espressioni che ho scritto che sono commented out perchè redundant per R. ho fatto riferimento alla slide 28 dell folder 04 delle slide.`
 
@@ -1245,8 +1252,13 @@ construct (AVE) exceeds the shared variance between the constructs.
 To Answer the first portion of this question we need to look into the
 output for the regression paths (structural models) connecting the 8
 exogenous factors we designed and the mediators factors. The outputs can
-be interpreted as any regular regression model, what we have to look out
-for is that not all our hypotheses might be confirmed.
+be interpreted as any regular lm() model , therefore we look at the
+`Estimate` column, not at the std.all column. We remind the reader that
+the standardised loading tells us the amount of variance in the item
+explained through the construct.
+
+One thing we will have to look out for is that not all our hypotheses
+might be confirmed, some estimates but seem counter-intuitive.
 
 \*\* What drives affective commitment?\*
 
@@ -1258,13 +1270,13 @@ Among the client perception factors, the one with the strongest effect
 on Affective Commitment is Shopping Experience, in a positive direction.
 For the client having a relaxing and intimate shopping experience builds
 affective commitment, this is very intuitive having a nice time at the
-Galerie will influence attachment. A nice memory of the time spent there
-adds positive connotations to the brand. Moreover, the Shopping
+Galeries will influence attachment. A nice memory of the time spent
+there adds positive connotations to the brand. Moreover, the Shopping
 Experience seems to be the only strongly significant estimate within the
 model.
 
 Other significant factors are French Lifestyle, Assortment and Luxury.
-For the first factor, we can deduce that people shopping at le galerie
+For the first factor, we can deduce that people shopping at le Galeries
 in Berlin are maybe looking for a particular experience, one that is
 centred around a French way of living. Therefore, finding this element
 satisfied results in a grown affective attachment to the brand.
@@ -1308,18 +1320,20 @@ as well, Professionalism is not relevant when we observe customer
 affective attachment, neither is organization. Both of these constructs
 are actually important when considering satisfaction.
 
-**Are COM and SAT mediating ?** Yes, in both regression paths the estimates
-corresponding to Affective attachment and Satisfaction are significant.
-Repurchase intention is positively driven by both mediators, whilst
-CO-creation intention is negatively driven by satisfaction, which it
-seems logical because the more satisfied the customer is the least
-motivated to share ideas they are.
+**Are COM and SAT mediating ?** Yes, in both regression paths the
+estimates corresponding to Affective attachment and Satisfaction are
+significant. Repurchase intention is positively driven by both
+mediators, whilst CO-creation intention is negatively driven by
+satisfaction, which it seems logical because the more satisfied the
+customer is the least motivated to share ideas they are.
 
 Clients who have had positive experiences at the Galerie and have
 developed an affective attachment to the store are more likely to
 re-purchase from there.
 
-`(Co-creation is a form of collaborative innovation: ideas are shared and improved together, rather than kept to oneself.????)se vuoi aggiungere numri let me know e mi adopero però tipo non lo so quanto sia rilevante. nel senso gli possiamo far vedere che abbiamo capito ma 30% of an intention bah ha poco senso per me. fammi sap :)`
+se vuoi aggiungere numeri let me know e mi adopero però tipo non lo so
+quanto sia rilevante. nel senso gli possiamo far vedere che abbiamo
+capito ma 30% of an intention bah ha poco senso per me. fammi sap :)\`
 
 ![](images/image-1589113358.png)
 
@@ -1328,6 +1342,58 @@ re-purchase from there.
 ![](images/image-2080386527.png)
 
 #### 3. What is driving the two distinct outcomes (repurchase and co-creation intention): Please rank the image dimensions with respect to the total effect on each outcome? Interpret your results
+
+We observe the estimates of the regression belonging to the eight client
+perception factors, we square the coefficients and look at their
+magnitudes. Also, we must take note that none of these coefficients are
+significant within the structural model. The only significant ones are
+the mediators.
+
+```{r}
+# create table with estimates values
+estimates<-data.frame("name"=c("assor","fr","shp","org","lux","cool","food","prof"),"c_cr"=c(-0.017,-0.132,0.154,-0.034,0.100,0.029,-0.037,-0.161), "c_rep"=c(-0.019,-0.034,0.041,0.009,0.063,-0.014, 0.04,-0.035))
+estimates$c_cr2=(estimates$c_cr)^2
+estimates$c_rep2=(estimates$c_rep)^2
+```
+
+For Co-creation Intention the ranking is the following:
+
+1.  Professionalism: This could be interpreted as professionalism
+    encourages the client/Respondent to the survey to engage into more
+    of these initiatives and possible workshops organised by the
+    Galeries.
+
+2.  Shopping Experience: The client has a
+
+3.  French Lifestyle
+
+4.  Luxury
+
+5.  Food
+
+6.  Organisation
+
+7.  Coolness
+
+8.  Assortment
+
+For Re-purchase intention the ranking is:
+
+1.   Luxury
+
+2.  Shopping Experience
+
+3.  Food
+
+4.  Professionalism
+
+5.  French Lifestyle
+
+6.  Assortment
+
+7.  Coolness
+
+8.  Organisation
 
 References:
 
