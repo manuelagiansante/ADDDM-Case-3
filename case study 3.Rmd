@@ -1301,6 +1301,21 @@ as well, Professionalism is not relevant when we observe customer
 affective attachment, neither is organization. Both of these constructs
 are actually important when considering satisfaction.
 
+Are COM and SAT mediating ? Yes, in both regression paths the estimates
+corresponding to Affective attachment and Satisfaction are significant.
+Repurchase intention is positively driven by both mediators, whilst
+CO-creation intention is negatively driven by satisfaction, which it
+seems logical because the more satisfied the customer is the least
+motivated to share ideas they are.
+
+Clients who have had positive experiences at the Galerie and have
+developed an affective attachement to the store are more likely to
+re-purchase from there.
+
+`(Co-creation is a form of collaborative innovation: ideas are shared and improved together, rather than kept to oneself.????)`
+
+![](images/image-1589113358.png)
+
 ![](images/image-624943893.png)
 
 ![](images/image-2080386527.png)
