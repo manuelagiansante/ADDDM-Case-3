@@ -775,10 +775,13 @@ z-stat and P value are not estimated for the first loading. By fixing
 that loading to 1 our model is at least identified (in our case,
 $df=107$ so it is over-identified). Moreover, fixing the first loading
 to 1 scales the loadings (and the variances) to the scale of the item
-being fixed. It is not necessarily crucial in our case, because all
-questions are over the same 7 item scale, but standardizing ensures more
-readability. In that sense, if we consider the Assortment factor, a 1
-unit increase in `Im1` will increase `Im2` by 0.88.
+being fixed. That is because our latent variables are not observed,
+hence the measurement units must be set. What the marker method does is
+pass the indicator's metric (so the first one for us) to the latent
+variable.
+
+In that sense, if we consider the Assortment factor, a 1 unit increase
+in `Im1` will increase `Im2` by 0.88.
 
 We also see that the factors variances are scaled to 1, and that the
 residuals of the Images ( because they have the dot . in front of the
