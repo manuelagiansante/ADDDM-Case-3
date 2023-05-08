@@ -1347,46 +1347,102 @@ For this we do not have to look into the regression path results only,
 we need to investigate total effects of the factors on the outcomes,
 those being indirect plus direct effects.
 
-In construct3 we defined the total effects:
+In construct3 we defined the total effects for **Repurchase Intention**:
 
-| Col1                         | Col2 |
-|------------------------------|------|
-| Assortment to C_REP          |      |
-| French lifestyle to C_REP    |      |
-| Shopping Experience to C_REP |      |
-| Organisation to C_REP        |      |
-| Luxury to C_REP              |      |
-| Coolness to C_REP            |      |
-| Food to C_REP                |      |
-| Professionalism to C_REP     |      |
-
-```{r}
-"# Total effects, from factors to outcomes
-# to C_REP
-A_REP := aa+ua+vi
-Fr_REP:=bb+ub+vl
-Sh_REP:=cc+uc+vm
-Org_REP:=dd+ud+vn
-Lux_REP:=ee+ue+vo
-Cool_REP:=ff+uf+vp
-Food_REP:=gg+ug+vq
-Prof_REP:=hh+uh+vr
-
-# to C_CR
-A_CR:=ii+wa+zi
-Fr_CR:=ll+wb+zl
-Sh_CR:=mm+wc+zm
-Org_CR:=nn+wd+zn
-Lux_CR:=oo+we+zo
-Cool_CR:=pp+wf+zp
-Food_CR:=qq+wg+zq
-Prof_CR:=rr+wh+zr"
-```
+| Factors                      | Formula            |
+|------------------------------|--------------------|
+| Assortment to C_REP          | A_REP := aa+ua+vi  |
+| French lifestyle to C_REP    | Fr_REP:=bb+ub+vl   |
+| Shopping Experience to C_REP | Sh_REP:=cc+uc+vm   |
+| Organisation to C_REP        | Org_REP:=dd+ud+vn  |
+| Luxury to C_REP              | Lux_REP:=ee+ue+vo  |
+| Coolness to C_REP            | Cool_REP:=ff+uf+vp |
+| Food to C_REP                | Food_REP:=gg+ug+vq |
+| Professionalism to C_REP     | Prof_REP:=hh+uh+vr |
 
 ```{r}
+estimates <-parameterestimates(fit3, boot.ci.type = "bca.simple", standardized = TRUE)
+estimates[c(234:241),c(1,5,8)]%>% kable()%>% kable_styling()
 
-parameterestimates(fit3, boot.ci.type = "bca.simple", standardized = TRUE) |>  kable()
+# questo sotto fatto per comodità ma si puo levare
+# to observe the magnitude
+x<-estimates[c(234:241),c(1,5,8)]
+x$est2<-(x$est)^2
 ```
+
+First thing we report is the p-value of these estimates, only Shopping
+Experience is showing significance.
+
+In descending order the client perception factors in terms of total
+effect:
+
+1.  Shopping Experience: the experience that the client has in the
+    Galeries is very important, if they had a good and relaxing time
+    they will be more likely to come back. The store is a place where
+    people most likely spend free time if the experience resulted
+    unpleasant and stressful then the idea of visiting the store again
+    would not even be considered by the individual.
+
+2.  Professionalism;
+
+3.  Food;
+
+4.  Assortment;
+
+5.  French Lifestyle;
+
+6.  Luxury;
+
+7.  Organisation: it does not stimulate repurchase intention, which is
+    quite logical after all arrangement and window organisation are not
+    necessarily what bring the client to come back for more, logically
+    speaking.
+
+8.  Coolness: reports a negative effect on Repurchase Intention, the
+    effect is not significant, but we can resonate that having the most
+    on trend items and brands does not necessarily means commitment from
+    the client. Having a sale space inside the Galeries is a long term
+    commitment and maybe the popularity of a certain brand might only
+    last a season.
+
+We defined the total effects for **Co-Creation Intention**:
+
+| Factors                     | Formula           |
+|-----------------------------|-------------------|
+| Assortment to C_CR          | A_CR:=ii+wa+zi    |
+| French lifestyle to C_CR    | Fr_CR:=ll+wb+z    |
+| Shopping Experience to C_CR | Sh_CR:=mm+wc+zm   |
+| Organisation to C_CR        | Org_CR:=nn+wd+zn  |
+| Luxury to C_CR              | Lux_CR:=oo+we+zo  |
+| Coolness to C_CR            | Cool_CR:=pp+wf+zp |
+| Food to C_CR                | Food_CR:=qq+wg+zq |
+| Professionalism to C_CR     | Prof_CR:=rr+wh+zr |
+
+```{r}
+estimates[c(242:249),c(1,5,8)] %>% kable()%>% kable_styling()
+
+y<-estimates[c(242:249),c(1,5,8)]
+y$est2<-(y$est)^2
+```
+
+In descending order the client perception factors in terms of total
+effect:
+
+1.  Shopping Experience
+
+2.  Professionalism
+
+3.  Food
+
+4.  French Lifestyle
+
+5.  Coolness
+
+6.  Luxury
+
+7.  Organisation
+
+8.  Assortment
 
 References:
 
