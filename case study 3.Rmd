@@ -671,8 +671,8 @@ are described by the observable variables (Images).
 We state the model:
 
 In `lavaan` syntax, `=~` means "is measured by". What we are designing
-here is a measurement model, because the latent variables predict the
-observed exogenous variables.By default, `lavaan` does allows the
+here is a **measurement** model, because the latent variables predict
+the observed exogenous variables.By default, `lavaan` does allows the
 factors ot correlate together. In order to avoid that, it is possible to
 use the syntax `factor1~~0*factor2` to set a correlation between two
 factors to zero. However, this choice depends on the data we have, it is
@@ -1212,7 +1212,7 @@ CR=sum.std.loadings/(sum.std.loadings+colSums(sum.std.theta))
 CR
 ```
 
-The CR values are high enough, without signaling redundancy.
+The CR values are high enough, without signaling inner redundancy.
 
 **Indicator Reliability**
 
@@ -1239,16 +1239,30 @@ AVE=colSums(std.loadings)/(colSums(sum.std.theta)+colSums(std.loadings))
 AVE
 ```
 
+#### Construct Validity: Discriminant validity
+
+Discriminant validity measures the distinctiveness of a construct, hence
+we want to check whether the constructs are highly intercorrelated or
+not. The former case implies that we have separated a construct into two
+or more factors, when it should have been designed as one larger
+construct. Discriminant validity is demonstrated when the shared
+variance within a construct (AVE) exceeds the shared variance between
+the constructs.
+
 ```{r}
+# std contains a list of model matrices
+# of the completely standardized model parameters
 std_fit1=inspect(fit3, "std")
 std_fit1$psi^2
 ```
 
-#### Discriminant validity
-
-Discriminant validity measures the distinctiveness of a construct.
-Discriminant validity is demonstrated when the shared variance within a
-construct (AVE) exceeds the shared variance between the constructs.
+The diagonals are the variances of the constructs ( the diagonal being
+of all 1s, means we are looking at a correlation matrix not a covariance
+one), which are in fact 1 because they have been standardized for
+identification. We compare the AVE values with the values below the
+diagonal. The correlations between constructs are much lower than AVE
+values, there is discriminant validity. The constructs we designed are
+distinct and valid.
 
 # SECOND QUESTION. Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
 
