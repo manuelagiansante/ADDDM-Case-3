@@ -1118,6 +1118,8 @@ semPaths(fit3, what="std", fade=F, edge.label.cex=1, sizeMan=7, sizeLat=7, exoCo
 
 ```
 
+### trial (delete later)
+
 ```{r}
 construct_trial <- "
 # MEASUREMENT MODELS
@@ -1216,6 +1218,8 @@ The CR values are high enough, without signaling inner redundancy.
 
 **Indicator Reliability**
 
+It is computed as the true score variance divided by total variance.
+
 ```{r}
 #Individual item Reliability
 IIR=std.loadings2/(colSums(std.theta)+std.loadings2)
@@ -1223,8 +1227,8 @@ IIR
 
 ```
 
-We observe that the reliability for C_CR2 is low. That should be take
-out of the model.
+We observe that the reliability for C_CR2 is low (below 0.4). That
+should be take out of the model.
 
 #### Average Variance Extracted
 
