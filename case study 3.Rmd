@@ -847,29 +847,32 @@ show them here in order to remain concise.
 
 ## Adding mediators
 
+From here on, Customer Satisfaction will be coded as `SAT` and Affective
+Commitment as `COM`.
+
 We proceed with a stepwise construction of the model, which is
 structural since we are introducing a relationship between latent
 variables.
 
-The paths between latent variables ( so the factors, the mediator COM
-and SAT) are modelled as regression paths.
+The paths between latent variables (so the factors and the mediators
+`COM` and `SAT`) are modeled as regression paths.
 
 ```{r}
 construct_m <- "
 # MEASUREMENT MODELS
 # Factors
-Assortment=~Im1+Im2
-French_lifestyle=~Im6+Im7
-Shop_experience=~Im20+Im21+Im22
-Organization=~Im3+Im4+Im5
-Luxury=~Im12+Im13
-Coolness=~Im17+Im18
-Food=~Im10+Im14
-Professionalism=~Im16+Im19
+Organization     =~ Im3 + Im4 + Im5
+Food             =~ Im10 + Im14
+Shop_experience  =~ Im20 + Im21 + Im22
+Coolness         =~ Im17 + Im18
+Assortment       =~ Im1 + Im2
+French_lifestyle =~ Im6 + Im7
+Luxury           =~ Im12 + Im13
+Professionalism  =~ Im16 + Im19 
 
 # mediators
-COM=~COM_A1+COM_A2+COM_A3+COM_A4
-SAT=~SAT_1+SAT_2+SAT_3
+COM =~ COM_A1 + COM_A2 + COM_A3 + COM_A4
+SAT =~ SAT_1 + SAT_2 + SAT_3
 
 # STRUCTURAL MODELS
 # Paths from factors to mediators (latent to latent)
@@ -879,93 +882,97 @@ SAT ~ i*Assortment + l*French_lifestyle + m*Shop_experience + n*Organization + o
 
 # Total effects for mediators
 # to COM
-A_COM := a
-Fr_COM:=b
-Sh_COM:=c
-Org_COM:=d
-Lux_COM:=e
-Cool_COM:=f
-Food_COM:=g
-Prof_COM:=h
+A_COM    := a
+Fr_COM   := b
+Sh_COM   := c
+Org_COM  := d
+Lux_COM  := e
+Cool_COM := f
+Food_COM := g
+Prof_COM := h
 
 # to SAT
-A_SAT:=i
-Fr_SAT:=l
-Sh_SAT:=m
-Org_SAT:=n
-Lux_SAT:=o
-Cool_SAT:=p
-Food_SAT:=q
-Prof_SAT:=r
-
+A_SAT    := i
+Fr_SAT   := l
+Sh_SAT   := m
+Org_SAT  := n
+Lux_SAT  := o
+Cool_SAT := p
+Food_SAT := q
+Prof_SAT := r
 "
-fitm<-cfa(construct_m, data=df1, missing="ML")
-summary(fitm, fit.measures=TRUE, standardized=TRUE)
 
-
+fitm <- cfa(construct_m, data = df1, missing = "ML")
+summary(fitm, fit.measures = TRUE, standardized = TRUE)
 ```
 
-The model remains of good fit: CHi-square/df= 1,52, CFI and TFI above
-0.95, RMSEA below 0.6, SRMR\< 0.7.
+The model remains of good fit:
+
+-   $\dfrac{\chi^2}{df} = 1,52 < 5$
+-   $RMSEA < 0.05$ and $SRMR < 0.05$
+-   $CFI > 0.95$ and $TLI > 0.95$
 
 When we observe the latent variables output, we notice that all
-standardised loadings are above 0.6, SAT_3 by little but it is
-acceptable. COM and SAT are good measures.
+standardized loadings are above 0.6, `SAT_3` by little but it is
+acceptable. `COM` and `SAT` are good measures.
 
-```{r}
-semPaths(fitm, what = "path", whatLabels = "std", style = "lisrel",fade=TRUE,
+```{r, fig.width=12, fig.height=10}
+semPaths(fitm, what = "path", whatLabels = "std", style = "lisrel", fade = TRUE,
          rotation = 2, layout = "tree3", mar = c(1, 1, 1, 1), 
          nCharNodes = 7,shapeMan = "rectangle", sizeMan = 8, sizeMan2 = 5, 
-         curvePivot=TRUE, edge.label.cex = 1, edge.color = "darkblue")
+         curvePivot = TRUE, edge.label.cex = 1, edge.color = "darkblue")
 ```
 
 The path linking COM and SAT is because we are allowing for the two to
 predict each-other.
 
-### Complete Model
+## Complete Model
 
-Customer Satisfaction coded as SAT Affective Commitment coded as COM
+From here on, Repurchase Intention will be coded as `C_REP` and
+Co-creation Intention as `C_CR`.
 
-Repurchase Intention coded as C_REP Co-creation Intention C_CR.
 Repurchase intention is the latent construct which dictates the answers
-to the questions from C_REP1 to C_REP3, all regarding the customer
+to the questions from `C_REP1` to `C_REP3`, all regarding the customer
 intentions for future purchasing from the Galeries. Co-creation
-intention is the latent factor which influences whether the interview
-customers are willing to participate in workshops or be interview again
-for similar surveys.
+intention is the latent factor which influences whether the interviewed
+customers are willing to participate in workshops or be interviewed
+again for similar surveys. Is is encoded by questions `C_COCRE1` to
+`C_COCRE4`
+
+We display the questions below.
 
 ```{r}
 descriptions[23:29,2]
 ```
 
-The paths between latent variables ( so the factors, the mediator COM
-and SAT, and the outcomes C_REP and C_CR ) are modelled as regression
-paths. `Lavaan` uses least squares in its estimation of regression paths
-in fact the output if we were to run a `lm()` model would almost the
-same if not for rounding errors.
+The paths between latent variables (so the factors, the mediators `COM`
+and `SAT`, and the outcomes `C_REP` and `C_CR`) are modeled as
+regression paths. `lavaan` uses least squares in its estimation of
+regression paths. In fact, the output if we were to run a `lm()` model
+would almost be identical if not for rounding errors.
 
 `allora questo cancellalo, ma ci sono delle espressioni che ho scritto che sono commented out perchè redundant per R. ho fatto riferimento alla slide 28 dell folder 04 delle slide.`
 
 ```{r}
-construct3 <-"
+construct3 <- "
 # MEASUREMENT MODELS
 # Factors
-Assortment=~Im1+Im2
-French_lifestyle=~Im6+Im7
-Shop_experience=~Im20+Im21+Im22
-Organization=~Im3+Im4+Im5
-Luxury=~Im12+Im13
-Coolness=~Im17+Im18
-Food=~Im10+Im14
-Professionalism=~Im16+Im19
+Organization     =~ Im3 + Im4 + Im5
+Food             =~ Im10 + Im14
+Shop_experience  =~ Im20 + Im21 + Im22
+Coolness         =~ Im17 + Im18
+Assortment       =~ Im1 + Im2
+French_lifestyle =~ Im6 + Im7
+Luxury           =~ Im12 + Im13
+Professionalism  =~ Im16 + Im19 
 
-# mediators
-COM=~COM_A1+COM_A2+COM_A3+COM_A4
-SAT=~SAT_1+SAT_2+SAT_3
+# Mediators
+COM =~ COM_A1 + COM_A2 + COM_A3 + COM_A4
+SAT =~ SAT_1 + SAT_2 + SAT_3
 
 # Outcomes
-C_REP=~ C_REP1+C_REP2+C_REP3
-C_CR=~C_CR1+C_CR2+C_CR3+C_CR4
+C_REP =~ C_REP1 + C_REP2 + C_REP3
+C_CR  =~ C_CR1 + C_CR2 + C_CR3 + C_CR4
 
 
 # STRUCTURAL MODELS
@@ -976,33 +983,33 @@ SAT ~ i*Assortment + l*French_lifestyle + m*Shop_experience + n*Organization + o
 
 # Total effects for mediators
 # to COM
-A_COM:=a
-Fr_COM:=b
-Sh_COM:=c
-Org_COM:=d
-Lux_COM:=e
-Cool_COM:=f
-Food_COM:=g
-Prof_COM:=h
+A_COM    := a
+Fr_COM   := b
+Sh_COM   := c
+Org_COM  := d
+Lux_COM  := e
+Cool_COM := f
+Food_COM := g
+Prof_COM := h
 
 # to SAT
-A_SAT:=i
-Fr_SAT:=l
-Sh_SAT:=m
-Org_SAT:=n
-Lux_SAT:=o
-Cool_SAT:=p
-Food_SAT:=q
-Prof_SAT:=r
+A_SAT    := i
+Fr_SAT   := l
+Sh_SAT   := m
+Org_SAT  := n
+Lux_SAT  := o
+Cool_SAT := p
+Food_SAT := q
+Prof_SAT := r
 
 # Paths from mediators to outcomes
-#C_REP ~ u*COM+v*SAT 
-#C_CR ~ w*COM+z*SAT
+#C_REP ~ u*COM + v*SAT 
+#C_CR  ~ w*COM + z*SAT
 
 # Paths from factors to outcome
-C_REP  ~ aa*Assortment + bb*French_lifestyle + cc*Shop_experience + dd*Organization + ee*Luxury + ff*Coolness + gg*Food + hh*Professionalism +u*COM +v*SAT
+C_REP  ~ aa*Assortment + bb*French_lifestyle + cc*Shop_experience + dd*Organization + ee*Luxury + ff*Coolness + gg*Food + hh*Professionalism + u*COM + v*SAT
 
-C_CR ~ ii*Assortment + ll*French_lifestyle + mm*Shop_experience + nn*Organization + oo*Luxury + pp*Coolness + qq*Food + rr*Professionalism + w*COM+ z*SAT
+C_CR ~ ii*Assortment + ll*French_lifestyle + mm*Shop_experience + nn*Organization + oo*Luxury + pp*Coolness + qq*Food + rr*Professionalism + w*COM + z*SAT
 
 # Indirect paths from factors to outcomes
 # passing through COM (edges [a,...,h] and [u,w])
@@ -1012,24 +1019,24 @@ C_CR ~ ii*Assortment + ll*French_lifestyle + mm*Shop_experience + nn*Organizatio
 
 # define indirect effects through COM
 # to C_REP
-ua:=a*u
-ub:=b*u
-uc:=c*u
-ud:=d*u
-ue:=e*u
-uf:=f*u
-ug:=g*u
-uh:=h*u
+ua := a*u
+ub := b*u
+uc := c*u
+ud := d*u
+ue := e*u
+uf := f*u
+ug := g*u
+uh := h*u
 
 # to C_CR
-wa:=a*w
-wb:=b*w
-wc:=c*w
-wd:=d*w
-we:=e*w
-wf:=f*w
-wg:=g*w
-wh:=h*w
+wa := a*w
+wb := b*w
+wc := c*w
+wd := d*w
+we := e*w
+wf := f*w
+wg := g*w
+wh := h*w
 
 # passing through SAT (edges [i,...,r] and [v,z])
 #C_REP ~ vi*Assortment + vl*French_lifestyle + vm*Shop_experience + vn*Organization + vo*Luxury + vp*Coolness + vq*Food + vr*Professionalism
@@ -1038,69 +1045,63 @@ wh:=h*w
 
 # define indirect effects 
 # through COM
-vi:=i*v
-vl:=l*v
-vm:=m*v
-vn:=n*v
-vo:=o*v
-vp:=p*v
-vq:=q*v
-vr:=r*v
+vi := i*v
+vl := l*v
+vm := m*v
+vn := n*v
+vo := o*v
+vp := p*v
+vq := q*v
+vr := r*v
 
 # Through SAT
-zi:=i*z
-zl:=l*z
-zm:=m*z
-zn:=n*z
-zo:=o*z
-zp:=p*z
-zq:=q*z
-zr:=r*z
+zi := i*z
+zl := l*z
+zm := m*z
+zn := n*z
+zo := o*z
+zp := p*z
+zq := q*z
+zr := r*z
 
 # Total effects, from factors to outcomes
 # to C_REP
-A_REP := aa+ua+vi
-Fr_REP:=bb+ub+vl
-Sh_REP:=cc+uc+vm
-Org_REP:=dd+ud+vn
-Lux_REP:=ee+ue+vo
-Cool_REP:=ff+uf+vp
-Food_REP:=gg+ug+vq
-Prof_REP:=hh+uh+vr
+A_REP    := aa + ua + vi
+Fr_REP   := bb + ub + vl
+Sh_REP   := cc + uc + vm
+Org_REP  := dd + ud + vn
+Lux_REP  := ee + ue + vo
+Cool_REP := ff + uf + vp
+Food_REP := gg + ug + vq
+Prof_REP := hh + uh + vr
 
 # to C_CR
-A_CR:=ii+wa+zi
-Fr_CR:=ll+wb+zl
-Sh_CR:=mm+wc+zm
-Org_CR:=nn+wd+zn
-Lux_CR:=oo+we+zo
-Cool_CR:=pp+wf+zp
-Food_CR:=qq+wg+zq
-Prof_CR:=rr+wh+zr
+A_CR    := ii + wa + zi
+Fr_CR   := ll + wb + zl
+Sh_CR   := mm + wc + zm
+Org_CR  := nn + wd + zn
+Lux_CR  := oo + we + zo
+Cool_CR := pp + wf + zp
+Food_CR := qq + wg + zq
+Prof_CR := rr + wh + zr
 "
 
-fit3<-cfa(construct3, data=df1, missing="ML")
-summary(fit3, fit.measures=TRUE, standardized=TRUE)
-
-
+fit3 <- cfa(construct3, data = df1, missing = "ML")
+fitsum <- summary(fit3, fit.measures = TRUE, standardized = TRUE)
+fitsum
+fitsumpe <- fitsum$pe
 ```
 
-**Measures of fit**
+The model remains of good fit:
 
--   Chi-Square/D=1.64
+-   $\dfrac{\chi^2}{df} = 1,64 < 5$
+-   $RMSEA < 0.05$ and $SRMR < 0.05$
+-   $CFI > 0.95$ and $TLI > 0.95$
 
--   CFI and TFI above 0.95
-
--   RMSEA measures the degree of misspecification of the model, it
-    measures 0.036, which is below the 0.05 indicating that our model is
-    a close fit to the true model.
-
--   SRMR 0.043
-
-All latent variables have std.all above 0.6.
+All latent variables have `std.all` above 0.6.
 
 ```{r}
-lavaanPlot(name="plot", fit3, labels = NULL)
+lavaanPlot(name = "plot", fit3, labels = NULL)
 ```
 
 `allora poi cancella anche quest, ma come vedi questo grafico con semapth non riesce a mettere i emdiatori al posto giusto, ora if you change the layout with tree,tre2,tree3 vedi che cambia ma non riesco a metterli in mezzo. pero lavaanplot va benissimo e quindi volevo si puo anche togliere`
@@ -1109,11 +1110,11 @@ lavaanPlot(name="plot", fit3, labels = NULL)
 semPaths(fit3,what = "path", whatLabels = "std", style = "lisrel",exoCov = T,
          rotation = 2, layout = "tree", mar = c(1, 2, 1, 2), 
          nCharNodes = 7,shapeMan = "rectangle", sizeMan = 7, sizeMan2 = 5, 
-         curvePivot=TRUE, edge.label.cex = 1.2, edge.color = "darkblue")
+         curvePivot = TRUE, edge.label.cex = 1.2, edge.color = "darkblue")
 
 
-semPaths(fit3, what="std", fade=F, edge.label.cex=1, sizeMan=7, sizeLat=7, exoCov = F, exoVar = F, intercepts = F, rotation = 2)
-
+semPaths(fit3, what = "std", fade = F, edge.label.cex = 1, sizeMan = 7, sizeLat = 7,
+         exoCov = F, exoVar = F, intercepts = F, rotation = 2)
 ```
 
 ### trial (delete later)
@@ -1163,7 +1164,7 @@ semPaths(fit_trial,what = "path", whatLabels = "std", style = "lisrel",exoCov = 
          curvePivot=TRUE, edge.label.cex = 1.2, edge.color = "darkblue")
 ```
 
-#### Reliability of Exogenous and Endogenous Constructs
+### Reliability of Exogenous and Endogenous Constructs
 
 Construct reliability can be measured either with Cronbach's alpha or
 with Composite Reliability (CR). The former is less reliable of a
@@ -1174,7 +1175,6 @@ redundant.
 **Cronbach's alpha**
 
 ```{r}
-
 cronbach(subset(df1, select = c(Im1,Im2)))$alpha
 cronbach(subset(df1, select = c(Im6,Im7)))$alpha
 cronbach(subset(df1, select = c(Im20,Im21,Im22)))$alpha
@@ -1197,19 +1197,21 @@ describe the latent factor well without being redundant.
 
 ```{r}
 # computing needed parameters
-std.loadings<- inspect(fit3, what="std")$lambda
-check=std.loadings
-check[check>0] <- 1
-std.loadings[std.loadings==0] <- NA
+std.loadings <- inspect(fit3, what = "std")$lambda
+check = std.loadings
+check[check > 0] <- 1
+std.loadings[std.loadings == 0] <- NA
 std.loadings2 <- std.loadings^2
-std.theta<- inspect(fit3, what="std")$theta
+std.theta <- inspect(fit3, what = "std")$theta
 
 #CR
-sum.std.loadings<-colSums(std.loadings, na.rm=TRUE)^2
-sum.std.theta<-rowSums(std.theta)
-sum.std.theta=check*sum.std.theta
-CR=sum.std.loadings/(sum.std.loadings+colSums(sum.std.theta))
+sum.std.loadings <- colSums(std.loadings, na.rm = TRUE)^2
+sum.std.theta <- rowSums(std.theta)
+sum.std.theta = check*sum.std.theta
+CR = sum.std.loadings/(sum.std.loadings + colSums(sum.std.theta))
 CR
+
+# semTools::compRelSEM(fit3)
 ```
 
 The CR values are high enough, without signaling inner redundancy.
@@ -1220,28 +1222,32 @@ It is computed as the true score variance divided by total variance.
 
 ```{r}
 #Individual item Reliability
-IIR=std.loadings2/(colSums(std.theta)+std.loadings2)
+IIR = std.loadings2/(colSums(std.theta) + std.loadings2)
 IIR
-
 ```
 
-We observe that the reliability for C_CR2 is low (below 0.4). That
+We observe that the reliability for `C_CR2` is low (below 0.4). That
 should be take out of the model.
 
-#### Average Variance Extracted
+### Average Variance Extracted
 
-It is the measure of the amount of variance that is captured by a
-construct in relation to the amount of variance due to measurement
-error.
+The Average Variance Extracted (AVE) is the measure of the amount of
+variance that is captured by a construct in relation to the amount of
+variance due to measurement error.
 
 ```{r}
-std.loadings<- inspect(fit3, what="std")$lambda
+std.loadings <- inspect(fit3, what = "std")$lambda
 std.loadings <- std.loadings^2
-AVE=colSums(std.loadings)/(colSums(sum.std.theta)+colSums(std.loadings))
+AVE = colSums(std.loadings)/(colSums(sum.std.theta) + colSums(std.loadings))
 AVE
+
+# semTools::AVE(fit3)
 ```
 
-#### Construct Validity: Discriminant validity
+We want the AVE to be above 0.5. Fortunately, it is the case for all
+latent variables, with `C_CR` being the closest to the cutoff.
+
+### Construct Validity: Discriminant validity
 
 Discriminant validity measures the distinctiveness of a construct, hence
 we want to check whether the constructs are highly intercorrelated or
@@ -1251,10 +1257,13 @@ construct. Discriminant validity is demonstrated when the shared
 variance within a construct (AVE) exceeds the shared variance between
 the constructs.
 
+In practice, we check that the AVE of a construct is greater than the
+square correlations of the construct with all other constructs.
+
 ```{r}
 # std contains a list of model matrices
 # of the completely standardized model parameters
-std_fit1=inspect(fit3, "std")
+std_fit1 = inspect(fit3, "std")
 std_fit1$psi^2
 ```
 
@@ -1262,24 +1271,55 @@ The diagonals are the variances of the constructs ( the diagonal being
 of all 1s, means we are looking at a correlation matrix not a covariance
 one), which are in fact 1 because they have been standardized for
 identification. We compare the AVE values with the values below the
-diagonal. The correlations between constructs are much lower than AVE
-values, there is discriminant validity. The constructs we designed are
-distinct and valid.
+diagonal. The squared correlations between constructs are much lower
+than AVE values, so there is discriminant validity. The constructs we
+designed are distinct and valid.
 
-# SECOND QUESTION. Are the mechanism driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
+# SECOND QUESTION. Are the mechanisms driving satisfaction and affective commitment similar? Are satisfaction and affective commitment mediating the impact of image perceptions on outcomes? If yes for which outcomes?
 
 To Answer the first portion of this question we need to look into the
 output for the regression paths (structural models) connecting the 8
 exogenous factors we designed and the mediators factors. The outputs can
-be interpreted as any regular lm() model , therefore we look at the
+be interpreted as any regular `lm()` model , therefore we look at the
 `Estimate` column, not at the std.all column. We remind the reader that
-the standardised loading tells us the amount of variance in the item
+the standardized loadings tell us the amount of variance in the item
 explained through the construct.
 
 One thing we will have to look out for is that not all our hypotheses
 might be confirmed, some estimates but seem counter-intuitive.
 
-\*\* What drives affective commitment?\*
+`LUCIA HERE: WHAT DOES THE SENTENCE ABOVE MEAN?`
+
+## Factors driving affective commitment
+
+The parameters of the model are stored inside our `fitsumpe` table,
+which is the parameters printed by the `summary()`function for our
+model. We display the rows corresponding to the eight factors driving
+`COM`.
+
+```{r}
+fitsumpe[33:40,] %>% kable(digits = 3) %>% kable_styling(full_width = TRUE)
+```
+
+The regression estimates, under column `est`, can be visualized using a
+bar chart.
+
+```{r}
+ggplot(fitsumpe[33:40,], aes(x = reorder(rhs, -est),
+                             y = est,
+                             fill = ifelse(pvalue < 0.05, "Significant", "Not significant"))) +
+  geom_col() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 0.5)) +
+  geom_hline(yintercept = 0) +
+  labs(x = "Factors",
+       y = "Regression estimate",
+       fill = "p value",
+       title = "Regression estimates of factors on Affective Commitment")
+```
+
+We immediately see that the factors with significant estimates are
+Shopping Experience, French Lifestyle, Assortment and Luxury.
 
 ![](images/image-988289484.png)
 
@@ -1288,71 +1328,113 @@ might be confirmed, some estimates but seem counter-intuitive.
 Among the client perception factors, the one with the strongest effect
 on Affective Commitment is Shopping Experience, in a positive direction.
 For the client having a relaxing and intimate shopping experience builds
-affective commitment, this is very intuitive having a nice time at the
+affective commitment, this is intuitive as having a nice time at the
 Galeries will influence attachment. A nice memory of the time spent
 there adds positive connotations to the brand. Moreover, the Shopping
 Experience seems to be the only strongly significant estimate within the
 model.
 
 Other significant factors are French Lifestyle, Assortment and Luxury.
-For the first factor, we can deduce that people shopping at le Galeries
+For the first factor, we can deduce that people shopping at les Galeries
 in Berlin are maybe looking for a particular experience, one that is
-centred around a French way of living. Therefore, finding this element
+centered around a French way of living. Therefore, finding this element
 satisfied results in a grown affective attachment to the brand.
 Assortment drives attachment, if the client knows they will find what
 they are looking for or they conclude a purchase that was highly
 satisfying for them this influences attachment positively. What seems to
 be counter-intuitive is the negative coefficient attached to the Luxury
-factor, but also we could maybe infer that a certain kind of ambience in
-the store might intimidate the customer.
+factor, but we could perhaps infer that a certain kind of ambiance in
+the store might intimidate the customer, or that too much luxury makes
+the brand be perceived as colder, more detached and elitist.
 
-Factors that do not seem to drive Affective Attachment are:
-Organization, Coolness, Food and Professionalism.
+Factors that do not seem to drive Affective Commitment are
+Professionalism, Food, Coolness and Organization.
 
-**What drives Satisfaction?**
+## Factors driving Satisfaction
+
+We retrieve the parameters regarding `SAT` inside our parameters table.
+
+```{r}
+fitsumpe[41:48,] %>% kable(digits = 3) %>% kable_styling(full_width = TRUE)
+```
+
+```{r}
+ggplot(fitsumpe[41:48,], aes(x = reorder(rhs, -est),
+                             y = est,
+                             fill = ifelse(pvalue < 0.05, "Significant", "Not significant"))) +
+  geom_col() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 0.5)) +
+  geom_hline(yintercept = 0) +
+  labs(x = "Factors",
+       y = "Regression estimate",
+       fill = "p value",
+       title = "Regression estimates of factors on Satisfaction")
+```
+
+We immediately see that the factors with significant estimates are
+Professionalism, Assortment, French Lifestyle and Organization.
 
 ![](images/image-118494340.png)
 
 ![](images/image-688880034.png)
 
-The constructs driving Satisfaction are Assortment, French Lifestyle,
-Organization and Professionalism. Regarding the former two we can
-identify the same dynamics we mentioned above, looking for a certain
-product or a certain style are key elements for the client satisfaction.
-Professionalism is the most significant element, such a dynamic seems
-very intuitive, professionalism influences service quality and therefore
-customer satisfaction with the service.
+Regarding Assortment and French Lifestyle, we can identify the same
+dynamics we mentioned for Affective Commitment, i.e. looking for a
+specific product or a certain style are key elements for the client
+satisfaction. Professionalism is the most significant element, such a
+dynamic seems very intuitive, as professionalism influences service
+quality and therefore customer satisfaction with the service.
 
-Organization very counter--intuitively has a negative effect on customer
+Organization very counter-intuitively has a negative effect on customer
 satisfaction, this could be an indication to change something about the
 organization and arrangement of the store.
 
 The constructs that do not seem to factor into customer satisfaction are
-Shopping Experience, Luxury, Coolness and Food.
+Food, Shopping Experience, Coolness and Luxury.
 
 The mechanisms driving the two mediating factors are similar in some
 instances, we have seen how Assortment and French Lifestyle are
 important elements in both cases. The variety in the offer and the
 identification of the brand as something typically French are driving
 forces of customers' attachment and satisfaction. There are differences
-as well, Professionalism is not relevant when we observe customer
-affective attachment, neither is organization. Both of these constructs
-are actually important when considering satisfaction.
+as well, Professionalism is not relevant when we observe customers'
+Affective Commitment, and neither is organization, but both of these
+constructs are actually important when considering satisfaction.
 
-**Are COM and SAT mediating ?** Yes, in both regression paths the
-estimates corresponding to Affective attachment and Satisfaction are
-significant. Repurchase intention is positively driven by both
-mediators, whilst CO-creation intention is negatively driven by
-satisfaction, which it seems logical because the more satisfied the
-customer is the least motivated to share ideas they are.
+## Are `COM` and `SAT` mediating?
 
-Clients who have had positive experiences at the Galerie and have
+We display the regression estimates for `C_CR` and `C_REP` with respect
+to the eight factors, `COM` and `SAT`.
+
+```{r}
+fitsumpe[59:68,] %>% kable(digits = 3) %>% kable_styling(full_width = TRUE)
+```
+
+```{r}
+fitsumpe[49:58,] %>% kable(digits = 3) %>% kable_styling(full_width = TRUE)
+```
+
+Yes, in both regression paths the estimates corresponding to Affective
+Commitment and Satisfaction are significant. Repurchase intention is
+positively driven by both mediators, whilst Co-creation intention is
+negatively driven by satisfaction, which it seems logical because the
+more satisfied the customer is the least motivated to share ideas they
+are.
+
+Clients who have had positive experiences at the Galeries and have
 developed an affective attachment to the store are more likely to
 re-purchase from there.
 
-se vuoi aggiungere numeri let me know e mi adopero però tipo non lo so
+Furthermore, it is important to note that none of the eight factors we
+have designed have a significant regression coefficient, their
+$p$-values are all above 0.05. This means that the direct effects of the
+factors on `C_CR` and `C_REP` are insignificant and that `COM` and `SAT`
+efficiently mediate all the effect of the eight factors.
+
+**se vuoi aggiungere numeri let me know e mi adopero però tipo non lo so
 quanto sia rilevante. nel senso gli possiamo far vedere che abbiamo
-capito ma 30% of an intention bah ha poco senso per me. fammi sap :)\`
+capito ma 30% of an intention bah ha poco senso per me. fammi sap :)**
 
 ![](images/image-1589113358.png)
 
@@ -1360,7 +1442,7 @@ capito ma 30% of an intention bah ha poco senso per me. fammi sap :)\`
 
 ![](images/image-2080386527.png)
 
-# THIRD QUESTION. What is driving the two distinct outcomes (repurchase and co-creation intention): Please rank the image dimensions with respect to the total effect on each outcome? Interpret your results
+# THIRD QUESTION. What is driving the two distinct outcomes (repurchase and co-creation intention): Please rank the image dimensions with respect to the total effect on each outcome. Interpret your results.
 
 For this we do not have to look into the regression path results only,
 we need to investigate total effects of the factors on the outcomes,
@@ -1368,28 +1450,28 @@ those being indirect plus direct effects.
 
 In construct3 we defined the total effects for **Repurchase Intention**:
 
-| Factors                      | Formula            |
-|------------------------------|--------------------|
-| Assortment to C_REP          | A_REP := aa+ua+vi  |
-| French lifestyle to C_REP    | Fr_REP:=bb+ub+vl   |
-| Shopping Experience to C_REP | Sh_REP:=cc+uc+vm   |
-| Organisation to C_REP        | Org_REP:=dd+ud+vn  |
-| Luxury to C_REP              | Lux_REP:=ee+ue+vo  |
-| Coolness to C_REP            | Cool_REP:=ff+uf+vp |
-| Food to C_REP                | Food_REP:=gg+ug+vq |
-| Professionalism to C_REP     | Prof_REP:=hh+uh+vr |
+| Factors                      | Formula               |
+|------------------------------|-----------------------|
+| Assortment to C_REP          | $A\_REP := aa+ua+vi$  |
+| French lifestyle to C_REP    | $Fr\_REP:=bb+ub+vl$   |
+| Shopping Experience to C_REP | $Sh\_REP:=cc+uc+vm$   |
+| Organisation to C_REP        | $Org\_REP:=dd+ud+vn$  |
+| Luxury to C_REP              | $Lux\_REP:=ee+ue+vo$  |
+| Coolness to C_REP            | $Cool\_REP:=ff+uf+vp$ |
+| Food to C_REP                | $Food\_REP:=gg+ug+vq$ |
+| Professionalism to C_REP     | $Prof\_REP:=hh+uh+vr$ |
 
 ```{r}
-estimates <-parameterestimates(fit3, boot.ci.type = "bca.simple", standardized = TRUE)
-estimates[c(234:241),c(1,5,8)]%>% kable()%>% kable_styling()
+estimates <- parameterestimates(fit3, boot.ci.type = "bca.simple", standardized = TRUE)
+estimates[c(234:241),c(1,5,8)] %>% kable() %>% kable_styling()
 
 # questo sotto fatto per comodità ma si puo levare
 # to observe the magnitude
-x<-estimates[c(234:241),c(1,5,8)]
-x$est2<-(x$est)^2
+x <- estimates[c(234:241),c(1,5,8)]
+x$est2 <- (x$est)^2
 ```
 
-First thing we report is the p-value of these estimates, only Shopping
+First thing we report is the $p$-value of these estimates, only Shopping
 Experience is showing significance.
 
 In descending order the client perception factors in terms of total
@@ -1426,22 +1508,22 @@ effect:
 
 We defined the total effects for **Co-Creation Intention**:
 
-| Factors                     | Formula           |
-|-----------------------------|-------------------|
-| Assortment to C_CR          | A_CR:=ii+wa+zi    |
-| French lifestyle to C_CR    | Fr_CR:=ll+wb+z    |
-| Shopping Experience to C_CR | Sh_CR:=mm+wc+zm   |
-| Organisation to C_CR        | Org_CR:=nn+wd+zn  |
-| Luxury to C_CR              | Lux_CR:=oo+we+zo  |
-| Coolness to C_CR            | Cool_CR:=pp+wf+zp |
-| Food to C_CR                | Food_CR:=qq+wg+zq |
-| Professionalism to C_CR     | Prof_CR:=rr+wh+zr |
+| Factors                     | Formula              |
+|-----------------------------|----------------------|
+| Assortment to C_CR          | $A\_CR:=ii+wa+zi$    |
+| French lifestyle to C_CR    | $Fr\_CR:=ll+wb+z$    |
+| Shopping Experience to C_CR | $Sh\_CR:=mm+wc+zm$   |
+| Organisation to C_CR        | $Org\_CR:=nn+wd+zn$  |
+| Luxury to C_CR              | $Lux\_CR:=oo+we+zo$  |
+| Coolness to C_CR            | $Cool\_CR:=pp+wf+zp$ |
+| Food to C_CR                | $Food\_CR:=qq+wg+zq$ |
+| Professionalism to C_CR     | $Prof\_CR:=rr+wh+zr$ |
 
 ```{r}
-estimates[c(242:249),c(1,5,8)] %>% kable()%>% kable_styling()
+estimates[c(242:249),c(1,5,8)] %>% kable() %>% kable_styling()
 
-y<-estimates[c(242:249),c(1,5,8)]
-y$est2<-(y$est)^2
+y <- estimates[c(242:249),c(1,5,8)]
+y$est2 <- (y$est)^2
 ```
 
 For Co-Creation as well what manages to be significant in terms of total
