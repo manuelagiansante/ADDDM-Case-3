@@ -1,7 +1,7 @@
 ---
 title: "Case Study 3"
 author: "Manuela Giansante & Lucia Camenisch"
-date: "2023-04-15"
+date: "April 15, 2023"
 output:
   html_document:
     toc: true # creating a table of contents (toc)
@@ -13,6 +13,52 @@ editor_options:
   markdown: 
     wrap: 72
 ---
+
+```{css,echo=FALSE}
+
+body {background-color: #F3E4AB;}
+
+h2, h3, h4, h5, h6 {color: #A91D01;}
+h1{color:#000C4A}
+p {color: #000C4A;}
+a {color: #1704E7;}
+
+pre {
+  background-color: #EBEBD3;
+  color: #000A3D;
+  border: 1px solid #ccc;
+  padding: 10px;
+  overflow: auto;
+}
+pre:not([class]) {
+    color: #000A3D;
+    background-color: #F3E4AB;
+  }
+
+code {
+  background-color: #F3E4AB;
+  color: #000A3D;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+blockquote {
+  color: #cdf2ff;
+  border-left: 4px solid #cdf2ff;
+  padding-left: 10px;
+  margin-left: 0;
+}
+output {
+  background-color: #cdf2ff;
+}
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    z-index: 2;
+    color: #EBEBD3;
+    background-color: #A91D01;
+    border-color: #A91D01;
+}
+```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align = "center")
@@ -569,7 +615,7 @@ print(FA8_119_815$loadings, cutoff = 0.3, sort = TRUE)
 
 # FIRST QUESTION: What are the dimensions by which Galeries Lafayette is perceived? Please explain your findings and rationale for your final result.
 
-Our final choice if `FA8_119_815` The 8 factors identified are:
+Our final choice is `FA8_119_815` and the 8 factors identified are:
 
 **Factor 1:** Organization and Arrangement
 
@@ -1401,11 +1447,6 @@ Intention**:
 ```{r}
 estimates <- parameterestimates(fit3, boot.ci.type = "bca.simple", standardized = TRUE)
 estimates[c(234:241),c(1,5,8)] %>% kable(digits = 3) %>% kable_styling(full_width = FALSE)
-
-# questo sotto fatto per comodità ma si puo levare
-# to observe the magnitude
-x <- estimates[c(234:241),c(1,5,8)]
-x$est2 <- (x$est)^2
 ```
 
 First thing we report is the $p$-value of these estimates, only Shopping
@@ -1462,9 +1503,6 @@ We defined the total effects for **Co-Creation Intention**:
 
 ```{r}
 estimates[c(242:249),c(1,5,8)] %>% kable(digits = 3) %>% kable_styling(full_width = FALSE)
-
-y <- estimates[c(242:249),c(1,5,8)]
-y$est2 <- (y$est)^2
 ```
 
 For Co-Creation as well what manages to be significant in terms of total
