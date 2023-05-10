@@ -951,8 +951,6 @@ regression paths. `lavaan` uses least squares in its estimation of
 regression paths. In fact, the output if we were to run a `lm()` model
 would almost be identical if not for rounding errors.
 
-`allora questo cancellalo, ma ci sono delle espressioni che ho scritto che sono commented out perchè redundant per R. ho fatto riferimento alla slide 28 dell folder 04 delle slide.`
-
 ```{r}
 construct3 <- "
 # MEASUREMENT MODELS
@@ -1100,68 +1098,21 @@ The model remains of good fit:
 
 All latent variables have `std.all` above 0.6.
 
+We plot the model using `lavaanPlot`, which gives the correct structure
+of our model. However, it displays no estimated parameters.
+
 ```{r}
 lavaanPlot(name = "plot", fit3, labels = NULL)
 ```
 
-`allora poi cancella anche quest, ma come vedi questo grafico con semapth non riesce a mettere i emdiatori al posto giusto, ora if you change the layout with tree,tre2,tree3 vedi che cambia ma non riesco a metterli in mezzo. pero lavaanplot va benissimo e quindi volevo si puo anche togliere`
+The `semPaths` plot instead gives us the parameters, but the two
+mediators are not displayed as such.
 
 ```{r}
 semPaths(fit3,what = "path", whatLabels = "std", style = "lisrel",exoCov = T,
          rotation = 2, layout = "tree", mar = c(1, 2, 1, 2), 
          nCharNodes = 7,shapeMan = "rectangle", sizeMan = 7, sizeMan2 = 5, 
-         curvePivot = TRUE, edge.label.cex = 1.2, edge.color = "darkblue")
-
-
-semPaths(fit3, what = "std", fade = F, edge.label.cex = 1, sizeMan = 7, sizeLat = 7,
-         exoCov = F, exoVar = F, intercepts = F, rotation = 2)
-```
-
-### trial (delete later)
-
-```{r}
-construct_trial <- "
-# MEASUREMENT MODELS
-# Factors
-Assortment=~Im1+Im2
-French_lifestyle=~Im6+Im7
-Shop_experience=~Im20+Im21+Im22
-Organization=~Im3+Im4+Im5
-Luxury=~Im12+Im13
-Coolness=~Im17+Im18
-Food=~Im10+Im14
-Professionalism=~Im16+Im19
-
-# mediators
-COM=~COM_A1+COM_A2+COM_A3+COM_A4
-SAT=~SAT_1+SAT_2+SAT_3
-
-# Outcomes
-C_REP=~ C_REP1+C_REP2+C_REP3
-C_CR=~ C_CR1+C_CR2+C_CR3+C_CR4
-
-# STRUCTURAL MODELS
-# latent factors(exogenous) to latent mediator (endogenuous)
-COM ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury + Coolness + Food + Professionalism
-
-SAT ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury + Coolness + Food + Professionalism
-
-#latent factors (exogenous) to latent outcome factors (endogenous)
-C_REP  ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury + Coolness + Food + Professionalism +COM +SAT
-
-C_CR ~ Assortment + French_lifestyle + Shop_experience + Organization + Luxury + Coolness + Food + Professionalism + COM + SAT"
-
-fit_trial<- sem(construct_trial, data=df1, missing="ML")
-summary(fit_trial,fit.measures=TRUE, standardized=TRUE)
-
-
-```
-
-```{r}
-semPaths(fit_trial,what = "path", whatLabels = "std", style = "lisrel",exoCov = T,
-         rotation = 2, layout = "tree", mar = c(1, 2, 1, 2), 
-         nCharNodes = 7,shapeMan = "rectangle", sizeMan = 7, sizeMan2 = 5, 
-         curvePivot=TRUE, edge.label.cex = 1.2, edge.color = "darkblue")
+         curvePivot = TRUE, edge.label.cex = 1, edge.color = "darkblue")
 ```
 
 ### Reliability of Exogenous and Endogenous Constructs
@@ -1211,6 +1162,7 @@ sum.std.theta = check*sum.std.theta
 CR = sum.std.loadings/(sum.std.loadings + colSums(sum.std.theta))
 CR
 
+# a function to compute them exists as well
 # semTools::compRelSEM(fit3)
 ```
 
@@ -1226,8 +1178,11 @@ IIR = std.loadings2/(colSums(std.theta) + std.loadings2)
 IIR
 ```
 
-We observe that the reliability for `C_CR2` is low (below 0.4). That
-should be take out of the model.
+We observe that the reliability for `C_CR2` is low (below 0.4). In the
+context of exploratory factor analysis, we could argue that it could be
+excluded give that its loading onto `C_CR` is low, when looking at the
+measurement model outputs. We notice that `SAT_3` is also below 0.4, but
+still very close to the cutoff, which is less worrying.
 
 ### Average Variance Extracted
 
@@ -1241,6 +1196,7 @@ std.loadings <- std.loadings^2
 AVE = colSums(std.loadings)/(colSums(sum.std.theta) + colSums(std.loadings))
 AVE
 
+# a function to compute them exists as well
 # semTools::AVE(fit3)
 ```
 
@@ -1286,9 +1242,7 @@ the standardized loadings tell us the amount of variance in the item
 explained through the construct.
 
 One thing we will have to look out for is that not all our hypotheses
-might be confirmed, some estimates but seem counter-intuitive.
-
-`LUCIA HERE: WHAT DOES THE SENTENCE ABOVE MEAN?`
+might be confirmed, some estimates might seem counter-intuitive.
 
 ## Factors driving affective commitment
 
@@ -1320,10 +1274,6 @@ ggplot(fitsumpe[33:40,], aes(x = reorder(rhs, -est),
 
 We immediately see that the factors with significant estimates are
 Shopping Experience, French Lifestyle, Assortment and Luxury.
-
-![](images/image-988289484.png)
-
-![](images/image-2138934369.png)
 
 Among the client perception factors, the one with the strongest effect
 on Affective Commitment is Shopping Experience, in a positive direction.
@@ -1374,10 +1324,6 @@ ggplot(fitsumpe[41:48,], aes(x = reorder(rhs, -est),
 
 We immediately see that the factors with significant estimates are
 Professionalism, Assortment, French Lifestyle and Organization.
-
-![](images/image-118494340.png)
-
-![](images/image-688880034.png)
 
 Regarding Assortment and French Lifestyle, we can identify the same
 dynamics we mentioned for Affective Commitment, i.e. looking for a
@@ -1432,23 +1378,14 @@ $p$-values are all above 0.05. This means that the direct effects of the
 factors on `C_CR` and `C_REP` are insignificant and that `COM` and `SAT`
 efficiently mediate all the effect of the eight factors.
 
-**se vuoi aggiungere numeri let me know e mi adopero però tipo non lo so
-quanto sia rilevante. nel senso gli possiamo far vedere che abbiamo
-capito ma 30% of an intention bah ha poco senso per me. fammi sap :)**
-
-![](images/image-1589113358.png)
-
-![](images/image-624943893.png)
-
-![](images/image-2080386527.png)
-
 # THIRD QUESTION. What is driving the two distinct outcomes (repurchase and co-creation intention): Please rank the image dimensions with respect to the total effect on each outcome. Interpret your results.
 
 For this we do not have to look into the regression path results only,
 we need to investigate total effects of the factors on the outcomes,
 those being indirect plus direct effects.
 
-In construct3 we defined the total effects for **Repurchase Intention**:
+In `construct3` we defined the total effects for **Repurchase
+Intention**:
 
 | Factors                      | Formula               |
 |------------------------------|-----------------------|
@@ -1463,7 +1400,7 @@ In construct3 we defined the total effects for **Repurchase Intention**:
 
 ```{r}
 estimates <- parameterestimates(fit3, boot.ci.type = "bca.simple", standardized = TRUE)
-estimates[c(234:241),c(1,5,8)] %>% kable() %>% kable_styling()
+estimates[c(234:241),c(1,5,8)] %>% kable(digits = 3) %>% kable_styling(full_width = FALSE)
 
 # questo sotto fatto per comodità ma si puo levare
 # to observe the magnitude
@@ -1472,7 +1409,11 @@ x$est2 <- (x$est)^2
 ```
 
 First thing we report is the $p$-value of these estimates, only Shopping
-Experience is showing significance.
+Experience is showing significance. As the null hypothesis of the test is
+$$H_0: est = 0$$
+a $p$-value above 0.05 indicates that we cannot reject the null hypothesis. Thus, the estimates computed for the effects with a non-significative $p$-value cannot be distinguished from zero. As such, from a statistical point of view, they cannot be compared or ranked together. The rankings are only truly valid when comparing statistically significant estimates.
+
+As the question asks for a ranking of the estimates, we still provide one, but the reader should keep in mind that only Shopping Experience can be declared above all the others, and no true order can be established between non-significant estimates.
 
 In descending order the client perception factors in terms of total
 effect:
@@ -1520,14 +1461,16 @@ We defined the total effects for **Co-Creation Intention**:
 | Professionalism to C_CR     | $Prof\_CR:=rr+wh+zr$ |
 
 ```{r}
-estimates[c(242:249),c(1,5,8)] %>% kable() %>% kable_styling()
+estimates[c(242:249),c(1,5,8)] %>% kable(digits = 3) %>% kable_styling(full_width = FALSE)
 
 y <- estimates[c(242:249),c(1,5,8)]
 y$est2 <- (y$est)^2
 ```
 
 For Co-Creation as well what manages to be significant in terms of total
-effects is the shopping experience. Here the survey did not mention any
+effects is the Shopping Experience. As before, we remind that the ranking of insignificant estimates isn't correct from a statistical point of view.
+
+Here the survey did not mention any
 online shopping platform, so the in-presence experience is very
 important. Moreover, we also have to consider that a lot of the direct
 effects from factors to outcome has negative estimates.
@@ -1558,6 +1501,8 @@ activities with the Galeries are not the same dynamic, and the study
 demonstrates that they are driven by different elements.
 
 References:
+
+Brown, T. A. (2015). Confirmatory factor analysis for applied research. Guilford publications.
 
 [Confirmatory Factor Analysis (CFA) in R with lavaan
 (ucla.edu)](https://stats.oarc.ucla.edu/r/seminars/rcfa/#s3b)
