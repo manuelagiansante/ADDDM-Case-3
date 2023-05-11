@@ -1450,11 +1450,18 @@ estimates[c(234:241),c(1,5,8)] %>% kable(digits = 3) %>% kable_styling(full_widt
 ```
 
 First thing we report is the $p$-value of these estimates, only Shopping
-Experience is showing significance. As the null hypothesis of the test is
-$$H_0: est = 0$$
-a $p$-value above 0.05 indicates that we cannot reject the null hypothesis. Thus, the estimates computed for the effects with a non-significative $p$-value cannot be distinguished from zero. As such, from a statistical point of view, they cannot be compared or ranked together. The rankings are only truly valid when comparing statistically significant estimates.
+Experience is showing significance. As the null hypothesis of the test
+is $$H_0: est = 0$$ a $p$-value above 0.05 indicates that we cannot
+reject the null hypothesis. Thus, the estimates computed for the effects
+with a non-significative $p$-value cannot be distinguished from zero. As
+such, from a statistical point of view, they cannot be compared or
+ranked together. The rankings are only truly valid when comparing
+statistically significant estimates.
 
-As the question asks for a ranking of the estimates, we still provide one, but the reader should keep in mind that only Shopping Experience can be declared above all the others, and no true order can be established between non-significant estimates.
+As the question asks for a ranking of the estimates, we still provide
+one, but the reader should keep in mind that only Shopping Experience
+can be declared above all the others, and no true order can be
+established between non-significant estimates.
 
 In descending order the client perception factors in terms of total
 effect:
@@ -1506,12 +1513,14 @@ estimates[c(242:249),c(1,5,8)] %>% kable(digits = 3) %>% kable_styling(full_widt
 ```
 
 For Co-Creation as well what manages to be significant in terms of total
-effects is the Shopping Experience. As before, we remind that the ranking of insignificant estimates isn't correct from a statistical point of view.
+effects is the Shopping Experience. As before, we remind that the
+ranking of insignificant estimates isn't correct from a statistical
+point of view.
 
-Here the survey did not mention any
-online shopping platform, so the in-presence experience is very
-important. Moreover, we also have to consider that a lot of the direct
-effects from factors to outcome has negative estimates.
+Here the survey did not mention any online shopping platform, so the
+in-presence experience is very important. Moreover, we also have to
+consider that a lot of the direct effects from factors to outcome has
+negative estimates.
 
 In descending order the client perception factors in terms of total
 effect:
@@ -1540,7 +1549,8 @@ demonstrates that they are driven by different elements.
 
 References:
 
-Brown, T. A. (2015). Confirmatory factor analysis for applied research. Guilford publications.
+Brown, T. A. (2015). Confirmatory factor analysis for applied research.
+Guilford publications.
 
 [Confirmatory Factor Analysis (CFA) in R with lavaan
 (ucla.edu)](https://stats.oarc.ucla.edu/r/seminars/rcfa/#s3b)
